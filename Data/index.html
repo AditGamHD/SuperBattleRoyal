@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard Data Game</title>
+  <title>Dashboard Data Game (GitHub)</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -72,6 +72,8 @@
 <div id="tab-contents"></div>
 
 <script>
+const BASE = "https://raw.githubusercontent.com/aditgamer777/superbattle-data/main/";
+
 const tabs = [
   { name: "Banner", file: "Banner.json", handler: displayBanner },
   { name: "Event", file: "event.json", handler: displayEvent },
@@ -108,11 +110,11 @@ function activateTab(index) {
   });
 
   const tab = tabs[index];
-  fetch(tab.file)
+  fetch(BASE + tab.file)
     .then(res => res.json())
     .then(data => tab.handler(data, document.getElementById(`tab-${index}`)))
     .catch(err => {
-      document.getElementById(`tab-${index}`).innerHTML = `<p style="color:red">Gagal memuat: ${tab.file}</p>`;
+      document.getElementById(`tab-${index}`).innerHTML = `<p style="color:red">Gagal memuat: ${tab.file}<br>${err}</p>`;
     });
 }
 
