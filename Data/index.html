@@ -1,44 +1,116 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard JSON SUPERBATTLE</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard JSON - SUPERBATTLE</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #121212; color: #f5f5f5; }
-    .login-container, .dashboard { max-width: 800px; margin: 50px auto; padding: 20px; background: #1f1f1f; border-radius: 10px; }
-    input[type="password"] { padding: 10px; width: 100%; margin-bottom: 20px; border: none; border-radius: 5px; }
-    button { background: #ff9800; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-    select, pre { width: 100%; padding: 10px; margin-top: 10px; background: #2c2c2c; color: #f5f5f5; border: none; border-radius: 5px; }
-    img { max-width: 100px; margin: 5px; border-radius: 5px; }
-    .hidden { display: none; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #101820;
+      color: #f5f5f5;
+    }
+    header {
+      background-color: #ff9800;
+      padding: 1rem 2rem;
+      color: #101820;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 2rem;
+    }
+    .login-container, .dashboard {
+      background: #1f1f1f;
+      padding: 2rem;
+      border-radius: 10px;
+      margin-top: 2rem;
+    }
+    input[type="password"] {
+      padding: 0.75rem;
+      width: 100%;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 5px;
+      background: #2c2c2c;
+      color: white;
+    }
+    button {
+      background: #ff9800;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #e67e00;
+    }
+    select, pre {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      background: #2c2c2c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .hidden {
+      display: none;
+    }
+    #gridItems {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .item-card {
+      background: #2c2c2c;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .item-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+    .item-card p {
+      margin: 0.25rem 0;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
-  <div class="login-container" id="login">
-    <h2>Masukkan Password untuk Akses Dashboard</h2>
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="checkPassword()">Masuk</button>
-    <p id="error" style="color: red;"></p>
-  </div>
+  <header>Dashboard JSON - SUPERBATTLE</header>
+  <div class="container">
+    <div class="login-container" id="login">
+      <h2>Masukkan Password</h2>
+      <input type="password" id="password" placeholder="Password">
+      <button onclick="checkPassword()">Masuk</button>
+      <p id="error" style="color: red;"></p>
+    </div>
 
-  <div class="dashboard hidden" id="dashboard">
-    <h2>Dashboard JSON - SUPERBATTLE</h2>
-    <label for="jsonSelector">Pilih File JSON:</label>
-    <select id="jsonSelector" onchange="loadJSON()">
-      <option value="event.json">event.json</option>
-      <option value="info.json">info.json</option>
-      <option value="sistem.json">sistem.json</option>
-      <option value="topup.json">topup.json</option>
-      <option value="shop.json">shop.json</option>
-      <option value="item.json">item.json</option>
-    </select>
-    <pre id="jsonDisplay">Pilih file untuk melihat isi...</pre>
-    <div id="imagePreview"></div>
+    <div class="dashboard hidden" id="dashboard">
+      <h2>Pilih File JSON</h2>
+      <input type="file" id="filePicker" accept="application/JSON" multiple onchange="handleFiles(event)">
+      <select id="jsonSelector" onchange="renderSelectedJSON()">
+        <option disabled selected>Pilih file JSON...</option>
+      </select>
+      <pre id="jsonDisplay">Pilih file JSON untuk melihat isi.</pre>
+      <div id="gridItems"></div>
+    </div>
   </div>
 
   <script>
     const passwordCorrect = "SUPERBATTLE";
+    let loadedFiles = {};
 
     function checkPassword() {
       const input = document.getElementById("password").value;
@@ -50,28 +122,51 @@
       }
     }
 
-    async function loadJSON() {
-      const file = document.getElementById("jsonSelector").value;
-      try {
-        const response = await fetch(file);
-        const data = await response.json();
-        document.getElementById("jsonDisplay").textContent = JSON.stringify(data, null, 2);
+    function handleFiles(event) {
+      const files = event.target.files;
+      const selector = document.getElementById("jsonSelector");
+      selector.innerHTML = '<option disabled selected>Pilih file JSON...</option>';
 
-        // Munculkan gambar jika ada
-        const preview = document.getElementById("imagePreview");
-        preview.innerHTML = "";
-        const allValues = JSON.stringify(data);
-        const urls = allValues.match(/https?:[^\"']+\.(png|jpg|jpeg|gif)/g);
-        if (urls) {
-          urls.forEach(url => {
-            const img = document.createElement("img");
-            img.src = url;
-            preview.appendChild(img);
+      for (let file of files) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const json = JSON.parse(e.target.result);
+            loadedFiles[file.name] = json;
+            const opt = document.createElement("option");
+            opt.value = file.name;
+            opt.text = file.name;
+            selector.appendChild(opt);
+          } catch (err) {
+            alert("File JSON tidak valid: " + file.name);
+          }
+        };
+        reader.readAsText(file);
+      }
+    }
+
+    function renderSelectedJSON() {
+      const selectedFile = document.getElementById("jsonSelector").value;
+      const jsonData = loadedFiles[selectedFile];
+      const display = document.getElementById("jsonDisplay");
+      const grid = document.getElementById("gridItems");
+      display.textContent = JSON.stringify(jsonData, null, 2);
+      grid.innerHTML = "";
+
+      if (selectedFile === "item.json" && jsonData.items) {
+        for (let kategori in jsonData.items) {
+          jsonData.items[kategori].forEach(item => {
+            const card = document.createElement("div");
+            card.className = "item-card";
+            card.innerHTML = `
+              <img src="${item.gambar}" onerror="this.src='https://via.placeholder.com/100?text=none'">
+              <p><strong>${item.nama}</strong></p>
+              <p>ID: ${item.id}</p>
+              <p>Download: ${item.download}</p>
+            `;
+            grid.appendChild(card);
           });
         }
-      } catch (err) {
-        document.getElementById("jsonDisplay").textContent = "Gagal memuat file: " + file;
-        document.getElementById("imagePreview").innerHTML = "";
       }
     }
   </script>
