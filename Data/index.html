@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SUPERBATTLE-DATABASE-ADITdev</title>
   <style>
     body {
       background-color: #1B1F2B;
-      color: #eee;
+      color: #ffffff;
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
     }
@@ -15,128 +15,113 @@
       background-color: #202938;
       padding: 1rem;
       text-align: center;
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       font-weight: bold;
       color: #00ffe0;
     }
-    .controls {
-      text-align: center;
-      margin: 1rem;
-    }
-    select, button {
-      padding: 0.5rem 1rem;
-      background-color: #2b2f3b;
-      border: none;
-      color: #fff;
-      margin: 0.5rem;
-      border-radius: 5px;
-    }
-    .data-container {
-      padding: 1rem;
+    .container {
       max-width: 1200px;
       margin: auto;
-    }
-    .json-box {
-      background: #12151c;
-      border: 1px solid #333;
       padding: 1rem;
-      white-space: pre-wrap;
-      overflow-x: auto;
-      border-radius: 10px;
+    }
+    .section {
+      margin-bottom: 2rem;
+    }
+    .section h2 {
+      border-bottom: 2px solid #00ffe0;
+      padding-bottom: 0.3rem;
+      margin-bottom: 1rem;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1rem;
     }
     .card {
       background-color: #2b2f3b;
       padding: 1rem;
       border-radius: 10px;
-      text-align: center;
       box-shadow: 0 2px 5px #0006;
+      text-align: center;
     }
     .card img {
       max-width: 100%;
+      height: auto;
       border-radius: 6px;
     }
     .card .title {
       font-weight: bold;
       margin-top: 0.5rem;
     }
-    .card .link {
-      color: #00ffe0;
+    .card .desc {
       font-size: 0.9rem;
+      color: #ccc;
     }
   </style>
 </head>
 <body>
   <header>SUPERBATTLE-DATABASE-ADITdev</header>
-
-  <div class="controls">
-    <select id="fileSelector">
-      <option value="Banner.json">Banner.json</option>
-      <option value="event.json">event.json</option>
-      <option value="item.json">item.json</option>
-      <option value="server.json">server.json</option>
-      <option value="shop.json">shop.json</option>
-      <option value="topup.json">topup.json</option>
-    </select>
-    <select id="modeSelector">
-      <option value="data">Mode Data</option>
-      <option value="grid">Mode Grid</option>
-    </select>
-    <button onclick="loadJSON()">TAMPILKAN</button>
+  <div class="container">
+    <div class="section">
+      <h2>Banner</h2>
+      <div class="grid">
+        <!-- Contoh kartu banner -->
+        <div class="card">
+          <img src="https://via.placeholder.com/300x150?text=Banner+1" alt="Banner">
+          <div class="title">Promo Elite Pass</div>
+          <div class="desc">Link: elitepass.com</div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Event</h2>
+      <div class="grid">
+        <div class="card">
+          <img src="https://via.placeholder.com/300x150?text=Event+Ramadan" alt="Event">
+          <div class="title">Event Ramadan</div>
+          <div class="desc">Tanggal: 2025-07-07</div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Item</h2>
+      <div class="grid">
+        <div class="card">
+          <img src="https://via.placeholder.com/200x200?text=Senjata+Petir" alt="Item">
+          <div class="title">Senjata Petir</div>
+          <div class="desc">Kategori: Senjata</div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Server</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="title">Server Indonesia</div>
+          <div class="desc">Status: Online<br>Region: Asia</div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Shop</h2>
+      <div class="grid">
+        <div class="card">
+          <img src="https://via.placeholder.com/200x200?text=Bundle+Samurai" alt="Shop Item">
+          <div class="title">Bundle Samurai</div>
+          <div class="desc">Harga: 5000</div>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Top-Up</h2>
+      <div class="grid">
+        <div class="card">
+          <img src="https://via.placeholder.com/200x200?text=100+Diamond" alt="Top-Up">
+          <div class="title">100 Diamond</div>
+          <div class="desc">Harga: 1500 + Bonus 10</div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="data-container" id="output"></div>
-
-  <script>
-    const baseURL = "https://raw.githubusercontent.com/AditGamHD/SuperBattleRoyal/main/Data/";
-
-    function loadJSON() {
-      const file = document.getElementById("fileSelector").value;
-      const mode = document.getElementById("modeSelector").value;
-      const url = baseURL + file;
-
-      fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          if (mode === "data") {
-            displayRaw(data);
-          } else {
-            displayGrid(data);
-          }
-        })
-        .catch(err => {
-          document.getElementById("output").innerHTML = `<div class="json-box">Gagal memuat: ${err}</div>`;
-        });
-    }
-
-    function displayRaw(data) {
-      const pretty = JSON.stringify(data, null, 2);
-      document.getElementById("output").innerHTML = `<div class="json-box">${pretty}</div>`;
-    }
-
-    function displayGrid(data) {
-      let html = '<div class="grid">';
-      if (Array.isArray(data)) {
-        data.forEach(item => {
-          const img = item.gambar || item.image || item.img || "";
-          const nama = item.nama || item.title || item.name || "Tanpa Nama";
-          const link = item.url || item.link || "";
-          html += `<div class="card">
-            ${img ? `<img src="${img}" alt="img">` : ""}
-            <div class="title">${nama}</div>
-            ${link ? `<div class="link"><a href="${link}" target="_blank">Lihat</a></div>` : ""}
-          </div>`;
-        });
-      } else {
-        html += `<div class="card">Data JSON tidak berupa array</div>`;
-      }
-      html += "</div>";
-      document.getElementById("output").innerHTML = html;
-    }
-  </script>
 </body>
-</html>
+      </html>
