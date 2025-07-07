@@ -13,20 +13,10 @@
     }
     header {
       background: #222;
-      padding: 10px 20px;
+      padding: 15px;
       font-size: 24px;
       color: #f9c200;
       text-align: center;
-      letter-spacing: 1px;
-    }
-    #auth {
-      display: flex;
-      justify-content: center;
-      margin: 40px;
-    }
-    #main {
-      display: none;
-      padding: 20px;
     }
     .tabs {
       display: flex;
@@ -51,7 +41,6 @@
       padding: 20px;
       background: #222;
       border-radius: 6px;
-      margin-top: 10px;
     }
     .tab-content.active {
       display: block;
@@ -73,37 +62,16 @@
     img {
       max-height: 50px;
     }
-    input[type="password"] {
-      padding: 10px;
-      font-size: 16px;
-      width: 200px;
-      margin-right: 10px;
-    }
-    button {
-      background: #f9c200;
-      border: none;
-      padding: 10px 15px;
-      cursor: pointer;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
 
 <header>📊 Dashboard Data SUPER BATTLE</header>
 
-<div id="auth">
-  <input type="password" id="password" placeholder="Masukkan password">
-  <button onclick="verifyPassword()">Masuk</button>
-</div>
-
-<div id="main">
-  <div class="tabs" id="tabs"></div>
-  <div id="tab-contents"></div>
-</div>
+<div class="tabs" id="tabs"></div>
+<div id="tab-contents"></div>
 
 <script>
-const PASSWORD = "SUPERBATTLE";
 const tabs = [
   { name: "Banner", file: "Banner.json", handler: displayBanner },
   { name: "Event", file: "event.json", handler: displayEvent },
@@ -112,17 +80,6 @@ const tabs = [
   { name: "Shop", file: "shop.json", handler: displayShop },
   { name: "Topup", file: "topup.json", handler: displayTopup },
 ];
-
-function verifyPassword() {
-  const input = document.getElementById('password').value;
-  if (input === PASSWORD) {
-    document.getElementById('auth').style.display = 'none';
-    document.getElementById('main').style.display = 'block';
-    initTabs();
-  } else {
-    alert('Password salah!');
-  }
-}
 
 function initTabs() {
   const tabContainer = document.getElementById('tabs');
@@ -243,3 +200,30 @@ function displayShop(data, container) {
 function displayTopup(data, container) {
   container.innerHTML = `
     <h3>Top-Up Paket</h3>
+    <table>
+      <tr><th>Harga</th><th>Diamond</th></tr>
+      ${data.topup.map(p => `
+        <tr><td>${p.harga}</td><td>${p.diamond}</td></tr>
+      `).join('')}
+    </table>
+
+    <h3>Membership</h3>
+    <table>
+      <tr><th>Jenis</th><th>Harga</th><th>Diamond</th><th>Bonus</th></tr>
+      ${data.membership.map(m => `
+        <tr>
+          <td>${m.jenis}</td>
+          <td>${m.harga}</td>
+          <td>${m.diamond}</td>
+          <td>${m.item.join(', ')}</td>
+        </tr>
+      `).join('')}
+    </table>
+  `;
+}
+
+window.onload = initTabs;
+</script>
+
+</body>
+</html>
