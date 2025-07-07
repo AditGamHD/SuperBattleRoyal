@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Status - Super Battle Royal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --online: #2ecc71;
+            --maintenance: #f39c12;
+            --update: #3498db;
+            --error: #e74c3c;
+            --dark: #1a2530;
+            --light: #ecf0f1;
+            --card-bg: #fff;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2530, #2c3e50);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            font-size: 28px;
+            color: var(--secondary);
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Server Status Card */
+        .server-status-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideInUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+            color: var(--dark);
+        }
+
+        .server-status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 100%;
+            background: var(--online);
+            transition: all 0.5s ease;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .status-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-badge.online {
+            background: var(--online);
+        }
+
+        .status-badge.maintenance {
+            background: var(--maintenance);
+        }
+
+        .status-badge.update {
+            background: var(--update);
+        }
+
+        .status-badge.error {
+            background: var(--error);
+        }
+
+        .status-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .detail-card {
+            background: rgba(52, 152, 219, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .detail-card h3 {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-card p {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .maintenance-info {
+            background: rgba(243, 156, 18, 0.1);
+            border-left: 4px solid var(--maintenance);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        /* Events Section */
+        .events-section {
+            margin-top: 40px;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: var(--secondary);
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .event-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            color: var(--dark);
+        }
+
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .event-banner {
+            position: relative;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+
+        .event-banner img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .event-card:hover .event-banner img {
+            transform: scale(1.05);
+        }
+
+        .event-info {
+            padding: 20px;
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .event-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .event-required {
+            background: var(--secondary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .event-desc {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .event-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #7f8c8d;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            gap: 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+            
+            .status-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .status-indicator {
+                justify-content: center;
+            }
+            
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-server"></i>
+                <h1>SERVER STATUS</h1>
+            </div>
+            <button class="back-btn" onclick="window.history.back()">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+        </header>
+        
+        <main>
+            <section class="server-status-card">
+                <div class="status-header">
+                    <h2 class="status-title">Status Server Super Battle Royal</h2>
+                    <div class="status-indicator">
+                        <div class="status-badge online">Online</div>
+                        <div class="ping">Ping: <span id="ping-value">42ms</span></div>
+                    </div>
+                </div>
+                
+                <div class="status-message">
+                    <h3>PESAN STATUS</h3>
+                    <p>Server berjalan normal. Selamat bermain!</p>
+                </div>
+                
+                <div class="status-details">
+                    <div class="detail-card">
+                        <h3>Versi Minimum</h3>
+                        <p>1.0.0</p>
+                    </div>
+                    <div class="detail-card">
+                        <h3>Pemain Aktif</h3>
+                        <p>24,583</p>
+                    </div>
+                    <div class="detail-card">
+                        <h3>Waktu Server</h3>
+                        <p id="server-time">Loading...</p>
+                    </div>
+                </div>
+                
+                <div class="maintenance-info" style="display: none;">
+                    <h3>JADWAL MAINTENANCE</h3>
+                    <p>Mulai: <span id="maintenance-start">-</span></p>
+                    <p>Selesai: <span id="maintenance-end">-</span></p>
+                </div>
+            </section>
+            
+            <section class="events-section">
+                <h2 class="section-title"><i class="fas fa-calendar-star"></i> Event Terbaru</h2>
+                
+                <div class="events-grid">
+                    <div class="event-card">
+                        <div class="event-banner">
+                            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Event Banner">
+                        </div>
+                        <div class="event-info">
+                            <div class="event-header">
+                                <h3 class="event-title">Pembukaan Superpass</h3>
+                                <div class="event-required">WAJIB</div>
+                            </div>
+                            <p class="event-desc">SuperPass awal season adalah era awal dari SuperPass. Dapatkan skin eksklusif dan hadiah menarik!</p>
+                            <div class="event-meta">
+                                <span>Ukuran: 24MB</span>
+                                <span>ID: Newseason</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="event-card">
+                        <div class="event-banner">
+                            <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Event Banner">
+                        </div>
+                        <div class="event-info">
+                            <div class="event-header">
+                                <h3 class="event-title">Summer Festival</h3>
+                                <div class="event-required">OPSIONAL</div>
+                            </div>
+                            <p class="event-desc">Rayakan musim panas dengan event spesial! Kumpulkan poin untuk mendapatkan hadiah eksklusif musim panas.</p>
+                            <div class="event-meta">
+                                <span>Ukuran: 18MB</span>
+                                <span>ID: Summer2025</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>© 2025 ADITdeveloper. Hak Cipta Dilindungi.</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Update server time
+        function updateServerTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZoneName: 'short'
+            };
+            document.getElementById('server-time').textContent = now.toLocaleDateString('id-ID', options);
+        }
+        
+        // Simulate ping
+        function simulatePing() {
+            const ping = Math.floor(Math.random() * 30) + 20;
+            document.getElementById('ping-value').textContent = ping + 'ms';
+        }
+        
+        // Initial calls
+        updateServerTime();
+        simulatePing();
+        
+        // Update time every second
+        setInterval(updateServerTime, 1000);
+        setInterval(simulatePing, 5000);
+        
+        // Fake loading effect for demonstration
+        setTimeout(() => {
+            document.querySelector('.loading').style.display = 'none';
+            document.querySelector('.server-status-card').style.display = 'block';
+            document.querySelector('.events-section').style.display = 'block';
+        }, 1500);
+    </script>
+</body>
+  </html>
