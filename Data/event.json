@@ -6,7 +6,8 @@
       "id": "Newseason", // id unik untuk event
       "name": "Pembukaan Superpass", // nama event
       "desc": "SuperPass awal season adalah era awal dari SuperPass", // deskripsi
-      "url": "https://yourgame.com/e/summer2025.zip", // link download
+      "download": "https://yourgame.com/e/summer2025.zip", // link download
+      "banner": "https://yourgame.com/e/summer2025.zip", // link banner
       "size": "24MB", // ukuran file
       "req": true // true = wajib download sebelum main
     },
