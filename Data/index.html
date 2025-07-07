@@ -1,231 +1,142 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard Data Game (GitHub)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SUPERBATTLE-DATABASE-ADITdev</title>
   <style>
     body {
+      background-color: #1B1F2B;
+      color: #eee;
       font-family: 'Segoe UI', sans-serif;
-      background: #111;
-      color: #fff;
       margin: 0;
-      padding: 0;
     }
     header {
-      background: #222;
-      padding: 15px;
-      font-size: 24px;
-      color: #f9c200;
+      background-color: #202938;
+      padding: 1rem;
       text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #00ffe0;
     }
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      background: #333;
-      border-bottom: 2px solid #f9c200;
+    .controls {
+      text-align: center;
+      margin: 1rem;
     }
-    .tab-button {
-      padding: 10px 20px;
-      cursor: pointer;
-      color: #fff;
-      background: #333;
+    select, button {
+      padding: 0.5rem 1rem;
+      background-color: #2b2f3b;
       border: none;
-      outline: none;
+      color: #fff;
+      margin: 0.5rem;
+      border-radius: 5px;
     }
-    .tab-button.active {
-      background: #f9c200;
-      color: #000;
+    .data-container {
+      padding: 1rem;
+      max-width: 1200px;
+      margin: auto;
     }
-    .tab-content {
-      display: none;
-      padding: 20px;
-      background: #222;
+    .json-box {
+      background: #12151c;
+      border: 1px solid #333;
+      padding: 1rem;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      border-radius: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      background-color: #2b2f3b;
+      padding: 1rem;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 5px #0006;
+    }
+    .card img {
+      max-width: 100%;
       border-radius: 6px;
     }
-    .tab-content.active {
-      display: block;
+    .card .title {
+      font-weight: bold;
+      margin-top: 0.5rem;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      color: #fff;
-    }
-    th, td {
-      padding: 8px 12px;
-      border: 1px solid #444;
-      text-align: left;
-    }
-    th {
-      background: #444;
-    }
-    img {
-      max-height: 50px;
+    .card .link {
+      color: #00ffe0;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
+  <header>SUPERBATTLE-DATABASE-ADITdev</header>
 
-<header>📊 Dashboard Data SUPER BATTLE</header>
+  <div class="controls">
+    <select id="fileSelector">
+      <option value="Banner.json">Banner.json</option>
+      <option value="event.json">event.json</option>
+      <option value="item.json">item.json</option>
+      <option value="server.json">server.json</option>
+      <option value="shop.json">shop.json</option>
+      <option value="topup.json">topup.json</option>
+    </select>
+    <select id="modeSelector">
+      <option value="data">Mode Data</option>
+      <option value="grid">Mode Grid</option>
+    </select>
+    <button onclick="loadJSON()">TAMPILKAN</button>
+  </div>
 
-<div class="tabs" id="tabs"></div>
-<div id="tab-contents"></div>
+  <div class="data-container" id="output"></div>
 
-<script>
-const BASE = "https://raw.githubusercontent.com/aditgamer777/superbattle-data/main/";
+  <script>
+    const baseURL = "https://raw.githubusercontent.com/AditGamHD/SuperBattleRoyal/main/Data/";
 
-const tabs = [
-  { name: "Banner", file: "Banner.json", handler: displayBanner },
-  { name: "Event", file: "event.json", handler: displayEvent },
-  { name: "Item", file: "item.json", handler: displayItem },
-  { name: "Server", file: "server.json", handler: displayServer },
-  { name: "Shop", file: "shop.json", handler: displayShop },
-  { name: "Topup", file: "topup.json", handler: displayTopup },
-];
+    function loadJSON() {
+      const file = document.getElementById("fileSelector").value;
+      const mode = document.getElementById("modeSelector").value;
+      const url = baseURL + file;
 
-function initTabs() {
-  const tabContainer = document.getElementById('tabs');
-  const contentContainer = document.getElementById('tab-contents');
-  tabs.forEach((tab, index) => {
-    const btn = document.createElement('button');
-    btn.className = 'tab-button';
-    btn.textContent = `🧾 ${tab.name}`;
-    btn.onclick = () => activateTab(index);
-    tabContainer.appendChild(btn);
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (mode === "data") {
+            displayRaw(data);
+          } else {
+            displayGrid(data);
+          }
+        })
+        .catch(err => {
+          document.getElementById("output").innerHTML = `<div class="json-box">Gagal memuat: ${err}</div>`;
+        });
+    }
 
-    const div = document.createElement('div');
-    div.className = 'tab-content';
-    div.id = `tab-${index}`;
-    contentContainer.appendChild(div);
-  });
-  activateTab(0);
-}
+    function displayRaw(data) {
+      const pretty = JSON.stringify(data, null, 2);
+      document.getElementById("output").innerHTML = `<div class="json-box">${pretty}</div>`;
+    }
 
-function activateTab(index) {
-  document.querySelectorAll('.tab-button').forEach((btn, i) => {
-    btn.classList.toggle('active', i === index);
-  });
-  document.querySelectorAll('.tab-content').forEach((div, i) => {
-    div.classList.toggle('active', i === index);
-  });
-
-  const tab = tabs[index];
-  fetch(BASE + tab.file)
-    .then(res => res.json())
-    .then(data => tab.handler(data, document.getElementById(`tab-${index}`)))
-    .catch(err => {
-      document.getElementById(`tab-${index}`).innerHTML = `<p style="color:red">Gagal memuat: ${tab.file}<br>${err}</p>`;
-    });
-}
-
-function displayBanner(data, container) {
-  container.innerHTML = `
-    <table>
-      <tr><th>ID</th><th>Judul</th><th>Gambar</th><th>Tanggal</th></tr>
-      ${data.map(b => `
-        <tr>
-          <td>${b.id}</td>
-          <td>${b.title}</td>
-          <td><img src="${b.gambar}"></td>
-          <td>${b.date}</td>
-        </tr>
-      `).join('')}
-    </table>
-  `;
-}
-
-function displayEvent(data, container) {
-  container.innerHTML = `
-    <table>
-      <tr><th>ID</th><th>Nama</th><th>Deskripsi</th><th>Banner</th><th>Size</th><th>Download</th><th>Wajib?</th></tr>
-      ${data.map(e => `
-        <tr>
-          <td>${e.id}</td>
-          <td>${e.name}</td>
-          <td>${e.desc}</td>
-          <td><img src="${e.banner}"></td>
-          <td>${e.size}</td>
-          <td><a href="${e.download}" target="_blank">Link</a></td>
-          <td>${e.req ? "✅" : "❌"}</td>
-        </tr>
-      `).join('')}
-    </table>
-  `;
-}
-
-function displayItem(data, container) {
-  container.innerHTML = Object.keys(data).map(kategori => `
-    <h3>${kategori.toUpperCase()}</h3>
-    <table>
-      <tr><th>ID</th><th>Nama</th><th>Gambar</th><th>Download</th></tr>
-      ${data[kategori].map(item => `
-        <tr>
-          <td>${item.id}</td>
-          <td>${item.nama}</td>
-          <td><img src="${item.gambar}"></td>
-          <td><a href="${item.download}" target="_blank">Link</a></td>
-        </tr>
-      `).join('')}
-    </table>
-  `).join('');
-}
-
-function displayServer(data, container) {
-  container.innerHTML = `
-    <table>
-      <tr><th>Versi</th><th>Status</th><th>Pesan</th><th>Maintenance</th></tr>
-      <tr>
-        <td>${data.versi}</td>
-        <td style="color:${data.status === 'online' ? 'lime' : 'red'}">${data.status.toUpperCase()}</td>
-        <td>${data.pesan}</td>
-        <td>${data.maintenance ? "✅" : "❌"}</td>
-      </tr>
-    </table>
-  `;
-}
-
-function displayShop(data, container) {
-  container.innerHTML = Object.entries(data).map(([kategori, items]) => `
-    <h3>${kategori.toUpperCase()}</h3>
-    <table>
-      <tr><th>Kategori</th><th>Item</th></tr>
-      ${Object.entries(items).map(([sub, arr]) => `
-        <tr>
-          <td>${sub}</td>
-          <td>${arr.join(', ')}</td>
-        </tr>
-      `).join('')}
-    </table>
-  `).join('');
-}
-
-function displayTopup(data, container) {
-  container.innerHTML = `
-    <h3>Top-Up Paket</h3>
-    <table>
-      <tr><th>Harga</th><th>Diamond</th></tr>
-      ${data.topup.map(p => `
-        <tr><td>${p.harga}</td><td>${p.diamond}</td></tr>
-      `).join('')}
-    </table>
-
-    <h3>Membership</h3>
-    <table>
-      <tr><th>Jenis</th><th>Harga</th><th>Diamond</th><th>Bonus</th></tr>
-      ${data.membership.map(m => `
-        <tr>
-          <td>${m.jenis}</td>
-          <td>${m.harga}</td>
-          <td>${m.diamond}</td>
-          <td>${m.item.join(', ')}</td>
-        </tr>
-      `).join('')}
-    </table>
-  `;
-}
-
-window.onload = initTabs;
-</script>
-
+    function displayGrid(data) {
+      let html = '<div class="grid">';
+      if (Array.isArray(data)) {
+        data.forEach(item => {
+          const img = item.gambar || item.image || item.img || "";
+          const nama = item.nama || item.title || item.name || "Tanpa Nama";
+          const link = item.url || item.link || "";
+          html += `<div class="card">
+            ${img ? `<img src="${img}" alt="img">` : ""}
+            <div class="title">${nama}</div>
+            ${link ? `<div class="link"><a href="${link}" target="_blank">Lihat</a></div>` : ""}
+          </div>`;
+        });
+      } else {
+        html += `<div class="card">Data JSON tidak berupa array</div>`;
+      }
+      html += "</div>";
+      document.getElementById("output").innerHTML = html;
+    }
+  </script>
 </body>
 </html>
