@@ -1,0 +1,35 @@
+{
+  "last_updated": "2025-07-07", // terakhir kali data ini diupdate
+  "Bannerevent": [
+    {
+      "id": "Banner1",
+      "title": "Free Avatar Dengan Code Redeem",
+      "gambar": "https://yourgame.com/banner/banner1.png",
+      "date": "2025-07-07"
+    },
+    {
+      "id": "Banner2",
+      "title": "Hadiah Login 7 Hari",
+      "gambar": "https://yourgame.com/banner/banner2.png",
+      "date": "2025-07-06"
+    },
+    {
+      "id": "Banner3",
+      "title": "Skin Gratis di SuperPass!",
+      "gambar": "https://yourgame.com/banner/banner3.png",
+      "date": "2025-07-05"
+    },
+    {
+      "id": "Banner4",
+      "title": "Event Kolaborasi Spesial!",
+      "gambar": "https://yourgame.com/banner/banner4.png",
+      "date": "2025-07-04"
+    },
+    {
+      "id": "Banner5",
+      "title": "Diskon Besar di Toko Elite!",
+      "gambar": "https://yourgame.com/banner/banner5.png",
+      "date": "2025-07-03"
+    }
+  ]
+}
