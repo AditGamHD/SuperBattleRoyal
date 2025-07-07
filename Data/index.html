@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>ADITdeveloper - DATABASE - SUPERBATTLE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grid JSON Dashboard - SUPERBATTLE</title>
   <style>
     body {
       font-family: sans-serif;
@@ -10,95 +11,181 @@
       color: #f5f5f5;
       padding: 2rem;
     }
+    h2 { margin-top: 2rem; }
     .hidden { display: none; }
-    input, select, button {
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: none;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
     }
-    button { background-color: #ff9800; color: white; cursor: pointer; }
-    pre {
+    .card {
       background: #1e1e1e;
-      padding: 1rem;
       border-radius: 8px;
-      overflow-x: auto;
-      max-height: 400px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     img {
-      max-width: 120px;
-      margin: 8px;
+      width: 100%;
+      max-width: 200px;
       border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .text-sm { font-size: 0.9rem; }
+    input[type="password"], button {
+      padding: 0.75rem;
+      border-radius: 5px;
+      border: none;
+      margin: 1rem 0;
+    }
+    button {
+      background: #ff9800;
+      color: white;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-
   <div id="login">
-    <h2>Masukkan Password:</h2>
+    <h2>Masukkan Password</h2>
     <input type="password" id="pass" placeholder="Password">
     <button onclick="login()">Masuk</button>
     <p id="error" style="color:red;"></p>
   </div>
 
   <div id="dashboard" class="hidden">
-    <h2>Dashboard JSON SUPERBATTLE</h2>
-    <label for="jsonPicker">Pilih File JSON:</label>
-    <select id="jsonPicker" onchange="loadJSON()">
-      <option disabled selected>-- Pilih File --</option>
-      <option value="Banner.json">Banner.json</option>
-      <option value="event.json">event.json</option>
-      <option value="item.json">item.json</option>
-      <option value="server.json">server.json</option>
-      <option value="shop.json">shop.json</option>
-      <option value="topup.json">topup.json</option>
-    </select>
-
-    <pre id="jsonOutput">JSON akan muncul di sini...</pre>
-    <div id="imagePreview"></div>
+    <h1>Dashboard JSON Grid - SUPERBATTLE</h1>
+    <div id="bannerGrid"></div>
+    <div id="eventGrid"></div>
+    <div id="itemGrid"></div>
+    <div id="serverGrid"></div>
+    <div id="shopGrid"></div>
+    <div id="topupGrid"></div>
   </div>
 
   <script>
+    const password = "SUPERBATTLE";
     const baseURL = "https://raw.githubusercontent.com/AditGamHD/SuperBattleRoyal/main/Data/";
-    const correctPass = "SUPERBATTLE";
 
     function login() {
       const input = document.getElementById('pass').value;
-      if (input === correctPass) {
+      if (input === password) {
         document.getElementById('login').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
+        loadAll();
       } else {
-        document.getElementById('error').textContent = "Password salah!";
+        document.getElementById('error').innerText = "Password salah!";
       }
     }
 
-    async function loadJSON() {
-      const filename = document.getElementById('jsonPicker').value;
-      const fullURL = baseURL + filename;
+    function createCard(obj) {
+      const card = document.createElement('div');
+      card.className = 'card';
 
-      try {
-        const res = await fetch(fullURL);
-        const json = await res.json();
-        document.getElementById('jsonOutput').textContent = JSON.stringify(json, null, 2);
+      if (obj.gambar || obj.banner) {
+        const img = document.createElement('img');
+        img.src = obj.gambar || obj.banner;
+        card.appendChild(img);
+      }
 
-        // gambar preview
-        const imgDiv = document.getElementById('imagePreview');
-        imgDiv.innerHTML = '';
-        const str = JSON.stringify(json);
-        const links = str.match(/https?:[^\"']+\\.(jpg|jpeg|png|gif)/gi);
-        if (links) {
-          links.forEach(link => {
-            const img = document.createElement('img');
-            img.src = link;
-            imgDiv.appendChild(img);
+      for (const key in obj) {
+        if (key !== 'gambar' && key !== 'banner' && key !== 'download') {
+          const p = document.createElement('p');
+          p.className = 'text-sm';
+          p.innerHTML = `<span class='label'>${key}:</span> ${obj[key]}`;
+          card.appendChild(p);
+        }
+      }
+
+      if (obj.download && obj.download !== 'none') {
+        const dl = document.createElement('a');
+        dl.href = obj.download;
+        dl.textContent = "Download";
+        dl.target = "_blank";
+        dl.style.marginTop = "0.5rem";
+        dl.style.color = "#ff9800";
+        card.appendChild(dl);
+      }
+
+      return card;
+    }
+
+    async function loadAll() {
+      await loadJSON('Banner.json', 'bannerGrid');
+      await loadJSON('event.json', 'eventGrid');
+      await loadItemJSON('item.json', 'itemGrid');
+      await loadFlatJSON('server.json', 'serverGrid');
+      await loadShopJSON('shop.json', 'shopGrid');
+      await loadTopupJSON('topup.json', 'topupGrid');
+    }
+
+    async function loadJSON(file, containerId) {
+      const res = await fetch(baseURL + file);
+      const data = await res.json();
+      const container = document.getElementById(containerId);
+      container.innerHTML = `<h2>${file}</h2><div class='grid'></div>`;
+      const grid = container.querySelector('.grid');
+      const list = data.Bannerevent || data.events || [];
+      list.forEach(entry => grid.appendChild(createCard(entry)));
+    }
+
+    async function loadItemJSON(file, containerId) {
+      const res = await fetch(baseURL + file);
+      const data = await res.json();
+      const container = document.getElementById(containerId);
+      container.innerHTML = `<h2>${file}</h2><div class='grid'></div>`;
+      const grid = container.querySelector('.grid');
+
+      for (const kategori in data.items) {
+        data.items[kategori].forEach(item => {
+          if (item.id !== 'none') {
+            const card = createCard({ ...item, kategori });
+            grid.appendChild(card);
+          }
+        });
+      }
+    }
+
+    async function loadFlatJSON(file, containerId) {
+      const res = await fetch(baseURL + file);
+      const data = await res.json();
+      const container = document.getElementById(containerId);
+      container.innerHTML = `<h2>${file}</h2><div class='grid'></div>`;
+      const grid = container.querySelector('.grid');
+      grid.appendChild(createCard(data));
+    }
+
+    async function loadShopJSON(file, containerId) {
+      const res = await fetch(baseURL + file);
+      const data = await res.json();
+      const container = document.getElementById(containerId);
+      container.innerHTML = `<h2>${file}</h2><div class='grid'></div>`;
+      const grid = container.querySelector('.grid');
+      for (const kategori in data.shop) {
+        for (const tipe in data.shop[kategori]) {
+          data.shop[kategori][tipe].forEach(code => {
+            grid.appendChild(createCard({ kategori, tipe, code }));
           });
         }
-      } catch (err) {
-        document.getElementById('jsonOutput').textContent = \"Gagal memuat: \" + fullURL;
-        document.getElementById('imagePreview').innerHTML = '';
       }
     }
-  </script>
 
+    async function loadTopupJSON(file, containerId) {
+      const res = await fetch(baseURL + file);
+      const data = await res.json();
+      const container = document.getElementById(containerId);
+      container.innerHTML = `<h2>${file}</h2><div class='grid'></div>`;
+      const grid = container.querySelector('.grid');
+      data.topup.forEach(t => grid.appendChild(createCard(t)));
+      data.membership.forEach(m => grid.appendChild(createCard(m)));
+    }
+  </script>
 </body>
 </html>
