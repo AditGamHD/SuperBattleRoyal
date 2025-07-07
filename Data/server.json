@@ -1,0 +1,7 @@
+{
+  "status": "online", // status server: "online", "maintenance", "update", "error"
+  "msg": "Server berjalan normal.", // pesan status yang bisa ditampilkan di UI
+  "versi": "1.0.0", // versi minimum game yang didukung server
+  "maintenance_start": null, // waktu mulai maintenance (atau null kalau tidak)
+  "maintenance_end": null // waktu selesai maintenance
+}
