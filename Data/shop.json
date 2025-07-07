@@ -26,6 +26,6 @@
     "shotgun":    ["none", "none", "none", "none", "none", "none", "none", "none", "none", "none"],
     "sniper":     ["none", "none", "none", "none", "none", "none", "none", "none", "none", "none"],
     "pistol":     ["none", "none", "none", "none", "none", "none", "none", "none", "none", "none"],
-    "mele":       ["none", "none", "none", "none", "none", "none", "none", "none", "none", "none"]
+    "melee":       ["none", "none", "none", "none", "none", "none", "none", "none", "none", "none"]
   }
 }
