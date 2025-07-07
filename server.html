@@ -161,6 +161,25 @@
             background: var(--error);
         }
 
+        .ping-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ping-value {
+            font-weight: 600;
+        }
+
+        .ping-indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: var(--online);
+            position: relative;
+            animation: pingPulse 1.5s infinite;
+        }
+
         .status-details {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -200,109 +219,6 @@
             border-radius: 0 8px 8px 0;
             margin-top: 20px;
             animation: pulse 2s infinite;
-        }
-
-        /* Events Section */
-        .events-section {
-            margin-top: 40px;
-            animation: fadeIn 1s ease-out 0.3s both;
-        }
-
-        .section-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section-title i {
-            color: var(--secondary);
-        }
-
-        .events-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-        }
-
-        .event-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.4s ease;
-            color: var(--dark);
-        }
-
-        .event-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .event-banner {
-            position: relative;
-            height: 0;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            background: #f5f5f5;
-            overflow: hidden;
-        }
-
-        .event-banner img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .event-card:hover .event-banner img {
-            transform: scale(1.05);
-        }
-
-        .event-info {
-            padding: 20px;
-        }
-
-        .event-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        .event-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .event-required {
-            background: var(--secondary);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .event-desc {
-            color: #7f8c8d;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-
-        .event-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #7f8c8d;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-            margin-top: 15px;
         }
 
         /* Footer */
@@ -378,6 +294,21 @@
             70% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); }
             100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); }
         }
+        
+        @keyframes pingPulse {
+            0% {
+                transform: scale(0.8);
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+            }
+            100% {
+                transform: scale(0.8);
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+            }
+        }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -400,10 +331,6 @@
             .status-indicator {
                 justify-content: center;
             }
-            
-            .events-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -425,23 +352,22 @@
                     <h2 class="status-title">Status Server Super Battle Royal</h2>
                     <div class="status-indicator">
                         <div class="status-badge online">Online</div>
-                        <div class="ping">Ping: <span id="ping-value">42ms</span></div>
+                        <div class="ping-container">
+                            <span class="ping-indicator"></span>
+                            <span>Ping: <span id="ping-value" class="ping-value">42ms</span></span>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="status-message">
                     <h3>PESAN STATUS</h3>
-                    <p>Server berjalan normal. Selamat bermain!</p>
+                    <p id="status-message">Server berjalan normal. Selamat bermain!</p>
                 </div>
                 
                 <div class="status-details">
                     <div class="detail-card">
                         <h3>Versi Minimum</h3>
-                        <p>1.0.0</p>
-                    </div>
-                    <div class="detail-card">
-                        <h3>Pemain Aktif</h3>
-                        <p>24,583</p>
+                        <p id="min-version">1.0.0</p>
                     </div>
                     <div class="detail-card">
                         <h3>Waktu Server</h3>
@@ -449,50 +375,10 @@
                     </div>
                 </div>
                 
-                <div class="maintenance-info" style="display: none;">
+                <div class="maintenance-info" id="maintenance-info" style="display: none;">
                     <h3>JADWAL MAINTENANCE</h3>
                     <p>Mulai: <span id="maintenance-start">-</span></p>
                     <p>Selesai: <span id="maintenance-end">-</span></p>
-                </div>
-            </section>
-            
-            <section class="events-section">
-                <h2 class="section-title"><i class="fas fa-calendar-star"></i> Event Terbaru</h2>
-                
-                <div class="events-grid">
-                    <div class="event-card">
-                        <div class="event-banner">
-                            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Event Banner">
-                        </div>
-                        <div class="event-info">
-                            <div class="event-header">
-                                <h3 class="event-title">Pembukaan Superpass</h3>
-                                <div class="event-required">WAJIB</div>
-                            </div>
-                            <p class="event-desc">SuperPass awal season adalah era awal dari SuperPass. Dapatkan skin eksklusif dan hadiah menarik!</p>
-                            <div class="event-meta">
-                                <span>Ukuran: 24MB</span>
-                                <span>ID: Newseason</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="event-card">
-                        <div class="event-banner">
-                            <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Event Banner">
-                        </div>
-                        <div class="event-info">
-                            <div class="event-header">
-                                <h3 class="event-title">Summer Festival</h3>
-                                <div class="event-required">OPSIONAL</div>
-                            </div>
-                            <p class="event-desc">Rayakan musim panas dengan event spesial! Kumpulkan poin untuk mendapatkan hadiah eksklusif musim panas.</p>
-                            <div class="event-meta">
-                                <span>Ukuran: 18MB</span>
-                                <span>ID: Summer2025</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
         </main>
@@ -503,6 +389,18 @@
     </div>
     
     <script>
+        // Fungsi untuk mengambil data server dari GitHub
+        async function fetchServerData() {
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/AditGamHD/SuperBattleRoyal/main/Data/server.json');
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching server data:', error);
+                return null;
+            }
+        }
+        
         // Update server time
         function updateServerTime() {
             const now = new Date();
@@ -525,6 +423,30 @@
             document.getElementById('ping-value').textContent = ping + 'ms';
         }
         
+        // Update UI dengan data server
+        function updateServerStatus(serverData) {
+            // Update status badge
+            const statusBadge = document.querySelector('.status-badge');
+            statusBadge.className = 'status-badge ' + serverData.status;
+            statusBadge.textContent = serverData.status;
+            
+            // Update status message
+            document.getElementById('status-message').textContent = serverData.msg;
+            
+            // Update min version
+            document.getElementById('min-version').textContent = serverData.versi;
+            
+            // Update maintenance info if available
+            const maintenanceInfo = document.getElementById('maintenance-info');
+            if (serverData.maintenance_start && serverData.maintenance_end) {
+                maintenanceInfo.style.display = 'block';
+                document.getElementById('maintenance-start').textContent = serverData.maintenance_start;
+                document.getElementById('maintenance-end').textContent = serverData.maintenance_end;
+            } else {
+                maintenanceInfo.style.display = 'none';
+            }
+        }
+        
         // Initial calls
         updateServerTime();
         simulatePing();
@@ -533,12 +455,18 @@
         setInterval(updateServerTime, 1000);
         setInterval(simulatePing, 5000);
         
-        // Fake loading effect for demonstration
-        setTimeout(() => {
-            document.querySelector('.loading').style.display = 'none';
-            document.querySelector('.server-status-card').style.display = 'block';
-            document.querySelector('.events-section').style.display = 'block';
-        }, 1500);
+        // Fetch server data and update UI
+        document.addEventListener('DOMContentLoaded', async () => {
+            const serverData = await fetchServerData();
+            if (serverData) {
+                updateServerStatus(serverData);
+            } else {
+                // Fallback if data can't be fetched
+                document.querySelector('.status-badge').textContent = 'error';
+                document.getElementById('status-message').textContent = 'Gagal memuat data server. Silakan coba lagi nanti.';
+                document.querySelector('.status-badge').className = 'status-badge error';
+            }
+        });
     </script>
 </body>
-  </html>
+    </html>
