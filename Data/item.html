@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Item Super Battle Royal</title>
+  <style>
+    body {
+      background: #1b1f2b;
+      color: white;
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #ffa500;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .item-card {
+      background: #202938;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 0 10px #0005;
+    }
+
+    .item-card img {
+      width: 100%;
+      max-height: 100px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .item-card p {
+      margin: 8px 0 4px;
+      font-size: 14px;
+    }
+
+    .item-card a {
+      display: inline-block;
+      padding: 5px 10px;
+      background: #ff7f00;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Daftar Item Super Battle Royal</h1>
+  <div id="item-container">Memuat data...</div>
+
+  <script>
+    fetch('./item.json')
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('item-container');
+        container.innerHTML = ''; // bersihkan tulisan "Memuat data..."
+
+        const items = data.items;
+
+        for (let kategori in items) {
+          const section = document.createElement('div');
+          section.innerHTML = `<h2>${kategori}</h2><div class="grid"></div>`;
+          const grid = section.querySelector('.grid');
+
+          items[kategori].forEach(item => {
+            // jika tidak ingin menampilkan item kosong, aktifkan baris ini:
+            // if (item.id === "none") return;
+
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.innerHTML = `
+              <img src="${item.gambar}" alt="${item.nama}">
+              <p>${item.nama}</p>
+              <a href="${item.download}" target="_blank">Download</a>
+            `;
+            grid.appendChild(card);
+          });
+
+          container.appendChild(section);
+        }
+      })
+      .catch(err => {
+        document.getElementById('item-container').innerHTML = `<p style="color:red">Gagal memuat data: ${err}</p>`;
+      });
+  </script>
+</body>
+</html>
