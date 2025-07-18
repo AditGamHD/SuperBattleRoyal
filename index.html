@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SuperBattleRoyal - Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      overflow-x: hidden;
+    }
+    header {
+      background: rgba(0,0,0,0.7);
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    header h1 {
+      font-size: 2.5rem;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #00faff; }
+      to { text-shadow: 0 0 20px #00ffd5, 0 0 30px #00bfff; }
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      background-color: #111;
+      padding: 15px;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 10px 20px;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      border-radius: 30px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    nav a:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px #fff;
+    }
+    section.hero {
+      padding: 60px 20px;
+      background: url('https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?auto=format&fit=crop&w=1450&q=80') no-repeat center center/cover;
+      text-align: center;
+      animation: fadeIn 2s ease forwards;
+    }
+    .hero h2 {
+      font-size: 3rem;
+      background: linear-gradient(to right, #f7971e, #ffd200);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      margin-top: 20px;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      padding: 50px 20px;
+    }
+    .feature {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      transition: transform 0.3s ease;
+    }
+    .feature:hover {
+      transform: translateY(-10px);
+      background: rgba(255, 255, 255, 0.1);
+    }
+    section#event-section {
+      padding: 40px 20px;
+      background-color: rgba(255,255,255,0.05);
+    }
+    #event-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .event-item {
+      background: #111;
+      padding: 15px;
+      border-radius: 12px;
+      transition: transform 0.3s;
+    }
+    .event-item:hover {
+      transform: scale(1.02);
+      background: #1a1a1a;
+    }
+    .event-item img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .event-item h4 {
+      margin-bottom: 8px;
+    }
+    footer {
+      background: #000;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+    }
+    .animated-icon {
+      font-size: 40px;
+      animation: spin 5s linear infinite;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎮 SuperBattleRoyal</h1>
+    <p>Game royale survival seru dan kompetitif!</p>
+  </header>
+
+  <nav>
+    <a href="daftar.html">Daftar Akun</a>
+    <a href="server.html">Info Server</a>
+    <a href="download.html">Download Game</a>
+  </nav>
+
+  <section class="hero">
+    <h2>Selamat datang di dunia pertempuran!</h2>
+    <p>Bertahan hidup, bangun tim, dan jadilah yang terakhir berdiri!</p>
+  </section>
+
+  <section class="features">
+    <div class="feature">
+      <h3>🔫 100+ Senjata</h3>
+      <p>Pilih dari berbagai senjata canggih untuk mendominasi medan perang.</p>
+    </div>
+    <div class="feature">
+      <h3>🛡️ Mode Ranked & Casual</h3>
+      <p>Main santai atau buktikan skill kamu di mode kompetitif!</p>
+    </div>
+    <div class="feature">
+      <h3>👨‍👩‍👧‍👦 Squad & Duo</h3>
+      <p>Main bareng teman atau bentuk regu elit untuk merebut kemenangan.</p>
+    </div>
+    <div class="feature">
+      <h3>📱 Multi Platform</h3>
+      <p>Main di Android, iOS, dan browser secara seamless.</p>
+    </div>
+  </section>
+
+  <section id="event-section">
+    <h2 style="text-align:center; margin-bottom:20px;">📅 Event Terbaru</h2>
+    <div id="event-list"></div>
+  </section>
+
+  <footer>
+    <div class="animated-icon">⚙️</div>
+    <p>&copy; 2025 SuperBattleRoyal. All rights reserved.</p>
+  </footer>
+
+  <script>
+    fetch('event.json')
+      .then(response => response.json())
+      .then(data => {
+        const eventList = document.getElementById('event-list');
+        data.events.forEach(ev => {
+          const eventItem = document.createElement('div');
+          eventItem.className = 'event-item';
+          eventItem.innerHTML = `
+            <img src="${ev.gambar}" alt="${ev.judul}">
+            <h4>${ev.judul}</h4>
+            <p><em>${ev.tanggal}</em></p>
+            <p>${ev.deskripsi}</p>
+          `;
+          eventList.appendChild(eventItem);
+        });
+      });
+  </script>
+</body>
+</html>
