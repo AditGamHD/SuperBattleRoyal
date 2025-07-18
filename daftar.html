@@ -1,1 +1,1227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperBattle Royal - Pendaftaran Akun</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        :root {
+            --primary: #6a00f4;
+            --secondary: #ff00aa;
+            --accent: #00ffcc;
+            --dark: #0a0a12;
+            --darker: #050508;
+            --light: #e0e0ff;
+            --danger: #ff3860;
+            --success: #2ecc71;
+            --warning: #ff9f43;
+            --info: #3498db;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(106, 0, 244, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 170, 0.1) 0%, transparent 20%),
+                linear-gradient(to bottom, var(--darker), var(--dark));
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo img {
+            height: 50px;
+        }
+
+        .logo-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(106, 0, 244, 0.5);
+        }
+
+        .guide-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .guide-btn:hover {
+            background: var(--accent);
+            color: var(--dark);
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        .main-content {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .registration-section {
+            flex: 1;
+            background: rgba(10, 10, 18, 0.8);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(106, 0, 244, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .registration-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(106, 0, 244, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(20, 20, 30, 0.8);
+            border: 1px solid rgba(106, 0, 244, 0.5);
+            border-radius: 4px;
+            color: var(--light);
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 10px;
+            top: 35px;
+            color: var(--primary);
+        }
+
+        .requirements {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            margin-top: 0.3rem;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+        }
+
+        .submit-btn:hover {
+            box-shadow: 0 0 20px rgba(106, 0, 244, 0.5);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .side-section {
+            width: 300px;
+            background: rgba(10, 10, 18, 0.8);
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(106, 0, 244, 0.3);
+            position: relative;
+        }
+
+        .game-info {
+            margin-bottom: 2rem;
+        }
+
+        .info-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .info-list {
+            list-style-type: none;
+        }
+
+        .info-list li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .info-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+        }
+
+        .stats {
+            background: rgba(106, 0, 244, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            margin-top: 2rem;
+        }
+
+        .stats-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--light);
+        }
+
+        .stat-value {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem;
+            border-radius: 5px;
+            background: var(--darker);
+            border-left: 4px solid var(--success);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            border-left-color: var(--danger);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning);
+        }
+
+        .notification.info {
+            border-left-color: var(--info);
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+        }
+
+        .notification-content h4 {
+            margin-bottom: 0.3rem;
+        }
+
+        .notification-content p {
+            font-size: 0.9rem;
+        }
+
+        .guide-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .guide-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .guide-content {
+            background: var(--darker);
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 10px;
+            padding: 2rem;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 30px rgba(106, 0, 244, 0.5);
+            position: relative;
+        }
+
+        .close-guide {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-guide:hover {
+            color: var(--danger);
+        }
+
+        .guide-content h2 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .guide-section {
+            margin-bottom: 2rem;
+        }
+
+        .guide-section h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(106, 0, 244, 0.5);
+            padding-bottom: 0.5rem;
+        }
+
+        .guide-section p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .guide-section ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: var(--dark);
+            margin-top: 0.5rem;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+        }
+
+        .strength-weak {
+            background: var(--danger);
+        }
+
+        .strength-medium {
+            background: var(--warning);
+        }
+
+        .strength-strong {
+            background: var(--success);
+        }
+
+        .strength-label {
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            text-align: right;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1002;
+            display: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(106, 0, 244, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1003;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .success-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .success-content {
+            background: var(--darker);
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            padding: 2rem;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 40px rgba(0, 255, 204, 0.5);
+            text-align: center;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+
+        .success-title {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+
+        .account-details {
+            background: rgba(10, 10, 18, 0.6);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--primary);
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px dashed rgba(106, 0, 244, 0.3);
+        }
+
+        .detail-label {
+            color: var(--light);
+            font-weight: bold;
+        }
+
+        .detail-value {
+            color: var(--accent);
+        }
+
+        .continue-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .continue-btn:hover {
+            box-shadow: 0 0 20px rgba(106, 0, 244, 0.5);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .side-section {
+                width: 100%;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .logo {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .success-content {
+                width: 95%;
+                padding: 1rem;
+            }
+
+            .success-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animation classes */
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(106, 0, 244, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(106, 0, 244, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(106, 0, 244, 0); }
+        }
+
+        .glow {
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px var(--light); }
+            to { text-shadow: 0 0 10px var(--accent), 0 0 20px var(--secondary); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-text">SUPERBATTLE ROYAL</div>
+            </div>
+            <button class="guide-btn" id="guideBtn">
+                <i class="fas fa-info-circle"></i> Panduan
+            </button>
+        </header>
+
+        <div class="main-content">
+            <section class="registration-section">
+                <h2 class="section-title">BUAT AKUN</h2>
+                
+                <form id="registrationForm">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" id="username" class="form-input" placeholder="Masukkan username" required>
+                        <i class="fas fa-user input-icon"></i>
+                        <div class="requirements">Harus 4-10 karakter, tanpa spasi atau karakter khusus</div>
+                        <div class="error-message" id="usernameError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="Masukkan password" required>
+                        <i class="fas fa-lock input-icon"></i>
+                        <div class="requirements">Minimal 5 karakter</div>
+                        <div class="password-strength">
+                            <div class="strength-bar" id="strengthBar"></div>
+                        </div>
+                        <div class="strength-label" id="strengthLabel"></div>
+                        <div class="error-message" id="passwordError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">Konfirmasi Password</label>
+                        <input type="password" id="confirmPassword" class="form-input" placeholder="Konfirmasi password" required>
+                        <i class="fas fa-lock input-icon"></i>
+                        <div class="error-message" id="confirmPasswordError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email (Opsional)</label>
+                        <input type="email" id="email" class="form-input" placeholder="Masukkan email">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="submit-btn pulse">
+                            <i class="fas fa-user-plus"></i> BUAT AKUN
+                        </button>
+                    </div>
+                </form>
+            </section>
+            
+            <section class="side-section">
+                <div class="game-info">
+                    <h3 class="info-title">TENTANG SUPERBATTLE ROYAL</h3>
+                    <ul class="info-list">
+                        <li>Bertarung melawan 100 pemain secara real-time</li>
+                        <li>Buka hero dan senjata yang kuat</li>
+                        <li>Naikkan peringkat untuk menjadi juara</li>
+                        <li>Bermain bersama teman dalam mode tim</li>
+                        <li>Event musiman dengan hadiah eksklusif</li>
+                    </ul>
+                </div>
+                
+                <div class="stats">
+                    <h3 class="stats-title">STAT AWAL ANDA</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Koin:</span>
+                        <span class="stat-value">1,000</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Diamond:</span>
+                        <span class="stat-value">50</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Hero Awal:</span>
+                        <span class="stat-value">Rookie</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Peringkat Awal:</span>
+                        <span class="stat-value">Perunggu V</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <div class="notification-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="notification-content">
+            <h4>Sukses</h4>
+            <p id="notificationMessage">Akun berhasil dibuat!</p>
+        </div>
+    </div>
+
+    <div class="guide-modal" id="guideModal">
+        <div class="guide-content">
+            <button class="close-guide" id="closeGuide">&times;</button>
+            <h2 class="glow">PANDUAN SUPERBATTLE ROYAL</h2>
+            
+            <div class="guide-section">
+                <h3>Pembuatan Akun</h3>
+                <p>Buat akun Anda untuk memulai petualangan di SuperBattle Royal. Ikuti persyaratan berikut:</p>
+                <ul>
+                    <li><strong>Username:</strong> 4-10 karakter, tanpa spasi atau karakter khusus</li>
+                    <li><strong>Password:</strong> Minimal 5 karakter</li>
+                    <li><strong>Email:</strong> Opsional tapi disarankan untuk pemulihan akun</li>
+                    <li>Username harus unik - Anda akan diberitahu jika nama yang dipilih sudah digunakan</li>
+                </ul>
+            </div>
+            
+            <div class="guide-section">
+                <h3>Memulai Permainan</h3>
+                <p>Sebagai pemain baru, Anda akan menerima:</p>
+                <ul>
+                    <li>1,000 koin untuk membeli item dasar</li>
+                    <li>50 diamond untuk konten premium</li>
+                    <li>Hero "Rookie" untuk memulai pertarungan</li>
+                    <li>Peringkat Perunggu V - naikkan untuk menjadi yang terbaik!</li>
+                </ul>
+            </div>
+            
+            <div class="guide-section">
+                <h3>Fitur Game</h3>
+                <p>SuperBattle Royal menawarkan elemen gameplay yang menarik:</p>
+                <ul>
+                    <li><strong>Battle Royale:</strong> Bersaing melawan 99 pemain lain dalam pertandingan real-time</li>
+                    <li><strong>Sistem Hero:</strong> Kumpulkan dan tingkatkan hero unik dengan kemampuan khusus</li>
+                    <li><strong>Senjata & Item:</strong> Temukan dan buka perlengkapan kuat untuk mendominasi pertarungan</li>
+                    <li><strong>Sistem Peringkat:</strong> Naikkan tier dari Perunggu ke Juara Royal</li>
+                    <li><strong>Super Pass:</strong> Dapatkan hadiah dengan meningkatkan level Super Pass setiap musim</li>
+                </ul>
+            </div>
+            
+            <div class="guide-section">
+                <h3>Tips untuk Pemula</h3>
+                <ul>
+                    <li>Selesaikan tutorial untuk memahami mekanika game</li>
+                    <li>Bermain dengan teman untuk koordinasi yang lebih baik</li>
+                    <li>Cek misi harian untuk hadiah tambahan</li>
+                    <li>Coba berbagai hero untuk menemukan gaya bermain Anda</li>
+                    <li>Tonton pemain top untuk mempelajari strategi lanjutan</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h2 class="success-title">AKUN BERHASIL DIBUAT!</h2>
+            <p>Selamat bergabung dengan SuperBattle Royal!</p>
+            
+            <div class="account-details" id="accountDetails">
+                <!-- Detail akun akan diisi oleh JavaScript -->
+            </div>
+            
+            <button class="continue-btn" id="continueBtn">LANJUTKAN KE GAME</button>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYLbIFVfaO487KN2z4ABDPTx1j0mBHF-o",
+            authDomain: "uvologin-1.firebaseapp.com",
+            databaseURL: "https://uvologin-1-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "uvologin-1",
+            storageBucket: "uvologin-1.appspot.com",
+            messagingSenderId: "243117010932",
+            appId: "1:243117010932:web:b98e90504c99e46f7d93a1",
+            measurementId: "G-25JPXF6HP3"
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // DOM Elements
+        const registrationForm = document.getElementById('registrationForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const emailInput = document.getElementById('email');
+        const usernameError = document.getElementById('usernameError');
+        const passwordError = document.getElementById('passwordError');
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+        const emailError = document.getElementById('emailError');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthLabel = document.getElementById('strengthLabel');
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notificationMessage');
+        const guideBtn = document.getElementById('guideBtn');
+        const guideModal = document.getElementById('guideModal');
+        const closeGuide = document.getElementById('closeGuide');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const successModal = document.getElementById('successModal');
+        const accountDetails = document.getElementById('accountDetails');
+        const continueBtn = document.getElementById('continueBtn');
+
+        // Indikator kekuatan password
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // Pengecekan panjang
+            if (password.length >= 5) strength += 1;
+            if (password.length >= 8) strength += 1;
+            
+            // Variasi karakter
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Update UI
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+                strengthBar.className = 'strength-bar';
+                strengthLabel.textContent = '';
+            } else {
+                if (strength <= 2) {
+                    strengthBar.style.width = '33%';
+                    strengthBar.className = 'strength-bar strength-weak';
+                    strengthLabel.textContent = 'Lemah';
+                    strengthLabel.style.color = 'var(--danger)';
+                } else if (strength <= 4) {
+                    strengthBar.style.width = '66%';
+                    strengthBar.className = 'strength-bar strength-medium';
+                    strengthLabel.textContent = 'Sedang';
+                    strengthLabel.style.color = 'var(--warning)';
+                } else {
+                    strengthBar.style.width = '100%';
+                    strengthBar.className = 'strength-bar strength-strong';
+                    strengthLabel.textContent = 'Kuat';
+                    strengthLabel.style.color = 'var(--success)';
+                }
+            }
+        });
+
+        // Validasi form
+        function validateUsername(username) {
+            const regex = /^[a-zA-Z0-9]{4,10}$/;
+            if (!regex.test(username)) {
+                usernameError.textContent = 'Username harus 4-10 karakter alfanumerik';
+                usernameError.style.display = 'block';
+                usernameInput.classList.add('shake');
+                setTimeout(() => usernameInput.classList.remove('shake'), 500);
+                return false;
+            }
+            usernameError.style.display = 'none';
+            return true;
+        }
+
+        function validatePassword(password) {
+            if (password.length < 5) {
+                passwordError.textContent = 'Password harus minimal 5 karakter';
+                passwordError.style.display = 'block';
+                passwordInput.classList.add('shake');
+                setTimeout(() => passwordInput.classList.remove('shake'), 500);
+                return false;
+            }
+            passwordError.style.display = 'none';
+            return true;
+        }
+
+        function validateConfirmPassword(password, confirmPassword) {
+            if (password !== confirmPassword) {
+                confirmPasswordError.textContent = 'Password tidak cocok';
+                confirmPasswordError.style.display = 'block';
+                confirmPasswordInput.classList.add('shake');
+                setTimeout(() => confirmPasswordInput.classList.remove('shake'), 500);
+                return false;
+            }
+            confirmPasswordError.style.display = 'none';
+            return true;
+        }
+
+        function validateEmail(email) {
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                emailError.textContent = 'Masukkan alamat email yang valid';
+                emailError.style.display = 'block';
+                emailInput.classList.add('shake');
+                setTimeout(() => emailInput.classList.remove('shake'), 500);
+                return false;
+            }
+            emailError.style.display = 'none';
+            return true;
+        }
+
+        // Cek apakah username sudah ada
+        async function checkUsernameExists(username) {
+            try {
+                const snapshot = await database.ref('users').orderByChild('username').equalTo(username).once('value');
+                return snapshot.exists();
+            } catch (error) {
+                console.error('Error saat mengecek username:', error);
+                return true; // Anggap sudah ada untuk mencegah duplikat jika error
+            }
+        }
+
+        // Cek apakah email sudah ada
+        async function checkEmailExists(email) {
+            if (!email) return false;
+            
+            try {
+                const snapshot = await database.ref('users').orderByChild('email').equalTo(email).once('value');
+                return snapshot.exists();
+            } catch (error) {
+                console.error('Error saat mengecek email:', error);
+                return true; // Anggap sudah ada untuk mencegah duplikat jika error
+            }
+        }
+
+        // Dapatkan UID terakhir dan tambahkan
+        async function getNewUid() {
+            try {
+                const snapshot = await database.ref('ID_terakhir').once('value');
+                const lastUid = snapshot.val() || 0;
+                const newUid = lastUid + 1;
+                
+                // Update UID terakhir di database
+                await database.ref('ID_terakhir').set(newUid);
+                
+                return newUid.toString();
+            } catch (error) {
+                console.error('Error mendapatkan UID baru:', error);
+                return Date.now().toString(); // UID fallback
+            }
+        }
+
+        // Buat akun baru
+        async function createAccount(username, password, email) {
+            loadingOverlay.style.display = 'flex';
+            
+            try {
+                // Cek apakah username sudah ada
+                const usernameExists = await checkUsernameExists(username);
+                if (usernameExists) {
+                    showNotification('Username sudah digunakan. Silakan pilih yang lain.', 'error');
+                    usernameError.textContent = 'Username sudah digunakan';
+                    usernameError.style.display = 'block';
+                    usernameInput.classList.add('shake');
+                    setTimeout(() => usernameInput.classList.remove('shake'), 500);
+                    loadingOverlay.style.display = 'none';
+                    return false;
+                }
+                
+                // Cek apakah email sudah ada
+                const emailExists = await checkEmailExists(email);
+                if (emailExists) {
+                    showNotification('Email sudah terdaftar. Gunakan email lain.', 'error');
+                    emailError.textContent = 'Email sudah terdaftar';
+                    emailError.style.display = 'block';
+                    emailInput.classList.add('shake');
+                    setTimeout(() => emailInput.classList.remove('shake'), 500);
+                    loadingOverlay.style.display = 'none';
+                    return false;
+                }
+                
+                // Dapatkan UID baru
+                const uid = await getNewUid();
+                
+                // Buat struktur data pengguna
+                const userData = {
+                    uid: uid,
+                    username: username,
+                    password: password, // Catatan: Di aplikasi nyata, password harus di-hash
+                    email: email || '',
+                    coin: 1000,
+                    diamond: 50,
+                    status: "offline",
+                    akun: {
+                        season: 1,
+                        dipakai: {
+                            hero: "Rookie"
+                        }
+                    },
+                    dimiliki: {
+                        hero: ["Rookie"],
+                        senjata: [],
+                        item: []
+                    },
+                    rank: {
+                        rank: "Bronze V",
+                        poin: 0,
+                        level: 1
+                    },
+                    superpass: {
+                        level: 0
+                    },
+                    teman: []
+                };
+                
+                // Simpan data pengguna ke database
+                await database.ref('users/' + uid).set(userData);
+                
+                // Tampilkan detail akun yang dibuat
+                showAccountDetails(userData);
+                
+                return true;
+            } catch (error) {
+                console.error('Error saat membuat akun:', error);
+                showNotification('Gagal membuat akun. Silakan coba lagi.', 'error');
+                return false;
+            } finally {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+
+        // Tampilkan detail akun yang berhasil dibuat
+        function showAccountDetails(userData) {
+            // Format detail akun
+            accountDetails.innerHTML = `
+                <div class="detail-item">
+                    <span class="detail-label">UID:</span>
+                    <span class="detail-value">${userData.uid}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Username:</span>
+                    <span class="detail-value">${userData.username}</span>
+                </div>
+                ${userData.email ? `
+                <div class="detail-item">
+                    <span class="detail-label">Email:</span>
+                    <span class="detail-value">${userData.email}</span>
+                </div>
+                ` : ''}
+                <div class="detail-item">
+                    <span class="detail-label">Koin Awal:</span>
+                    <span class="detail-value">${userData.coin.toLocaleString()}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Diamond Awal:</span>
+                    <span class="detail-value">${userData.diamond}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Hero Awal:</span>
+                    <span class="detail-value">${userData.akun.dipakai.hero}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Peringkat Awal:</span>
+                    <span class="detail-value">${userData.rank.rank}</span>
+                </div>
+            `;
+            
+            // Tampilkan modal sukses
+            successModal.classList.add('active');
+        }
+
+        // Tampilkan notifikasi
+        function showNotification(message, type = 'success') {
+            notification.className = 'notification ' + type;
+            notification.querySelector('.notification-icon i').className = 
+                type === 'success' ? 'fas fa-check-circle' :
+                type === 'error' ? 'fas fa-exclamation-circle' :
+                type === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+            notification.querySelector('h4').textContent = 
+                type === 'success' ? 'Sukses' :
+                type === 'error' ? 'Error' :
+                type === 'warning' ? 'Peringatan' : 'Info';
+            notificationMessage.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Submit form
+        registrationForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const email = emailInput.value.trim();
+            
+            // Validasi input
+            const isUsernameValid = validateUsername(username);
+            const isPasswordValid = validatePassword(password);
+            const isConfirmPasswordValid = validateConfirmPassword(password, confirmPassword);
+            const isEmailValid = validateEmail(email);
+            
+            if (!isUsernameValid || !isPasswordValid || !isConfirmPasswordValid || !isEmailValid) {
+                return;
+            }
+            
+            // Buat akun
+            const accountCreated = await createAccount(username, password, email);
+            
+            if (accountCreated) {
+                registrationForm.reset();
+                strengthBar.style.width = '0%';
+                strengthBar.className = 'strength-bar';
+                strengthLabel.textContent = '';
+                
+                // Animasi untuk sukses
+                const submitBtn = document.querySelector('.submit-btn');
+                submitBtn.classList.remove('pulse');
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> AKUN BERHASIL DIBUAT!';
+                submitBtn.style.background = 'linear-gradient(45deg, var(--success), var(--accent))';
+                
+                setTimeout(() => {
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> BUAT AKUN';
+                    submitBtn.style.background = 'linear-gradient(45deg, var(--primary), var(--secondary))';
+                    submitBtn.classList.add('pulse');
+                }, 3000);
+            }
+        });
+
+        // Modal panduan
+        guideBtn.addEventListener('click', function() {
+            guideModal.classList.add('active');
+        });
+
+        closeGuide.addEventListener('click', function() {
+            guideModal.classList.remove('active');
+        });
+
+        // Tutup modal saat klik di luar
+        guideModal.addEventListener('click', function(e) {
+            if (e.target === guideModal) {
+                guideModal.classList.remove('active');
+            }
+        });
+
+        // Tombol lanjutkan di modal sukses
+        continueBtn.addEventListener('click', function() {
+            successModal.classList.remove('active');
+            // Di sini bisa diarahkan ke halaman game atau login
+            showNotification('Selamat bermain SuperBattle Royal!', 'success');
+        });
+
+        // Tutup modal dengan tombol ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (guideModal.classList.contains('active')) {
+                    guideModal.classList.remove('active');
+                }
+                if (successModal.classList.contains('active')) {
+                    successModal.classList.remove('active');
+                }
+            }
+        });
+
+        // Animasi awal
+        setTimeout(() => {
+            document.querySelectorAll('.form-group').forEach((group, index) => {
+                setTimeout(() => {
+                    group.style.opacity = '1';
+                    group.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }, 500);
+
+        // Preload animasi
+        document.querySelectorAll('.form-group').forEach(group => {
+            group.style.opacity = '0';
+            group.style.transform = 'translateY(20px)';
+            group.style.transition = 'all 0.5s ease';
+        });
+    </script>
+</body>
+</html>
