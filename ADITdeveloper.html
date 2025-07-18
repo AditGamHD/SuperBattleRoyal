@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard SUPERBATTLE</title>
+  <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! JANGAN DIAMBIL  ©COPIRIGHT ADITdeveloper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+  <style>
+    body { font-family: Arial, sans-serif; background: #111; color: #eee; margin:0; padding:0; }
+    header { background:#222; padding:10px; text-align:center; }
+    nav button { margin:0 5px; padding:10px; background:#444; color:#eee; border:none; cursor:pointer; }
+    .active { background:#ff9800; color:#000; }
+    .container { padding:20px; max-width:600px; margin:auto; }
+    .box { background:#222; padding:20px; border-radius:8px; margin-bottom:20px; }
+    input, select, textarea, button { width:100%; padding:10px; margin:8px 0; border-radius:5px; border:none; }
+    button { background:orange; color:black; cursor:pointer; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { border:1px solid #444; padding:6px; text-align:left; }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+  <!-- LOGIN SCREEN -->
+  <div id="login" class="container box">
+    <h2>Masukkan Password</h2>
+    <input type="password" id="pwd" placeholder="Password Admin">
+    <button onclick="login()">Login</button>
+    <div id="err" style="color:red;"></div>
+  </div>
+  <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! JANGAN DIAMBIL  ©COPIRIGHT ADITdeveloper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+  <!-- DASHBOARD -->
+  <div id="dashboard" style="display:none;">
+    <header>
+      <nav>
+        <button class="active" onclick="showTab('home')">Home</button>
+        <button onclick="showTab('server')">Server</button>
+        <button onclick="showTab('akun')">Akun</button>
+        <button onclick="showTab('event')">Event</button>
+      </nav>
+    </header>
+    <div id="home" class="container box">
+      <h2>Dashboard UVOWORLD</h2>
+      <p>Pilih tab di atas untuk mengatur server, melihat akun, atau event.</p>
+    </div>
+  <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! JANGAN DIAMBIL  ©COPIRIGHT ADITdeveloper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+    <div id="server" class="container box" style="display:none;">
+      <h2>Server</h2>
+      <label>Status:</label>
+      <select id="sStatus">
+        <option>Online</option><option>Offline</option><option>Maintenance</option>
+      </select>
+      <label>Deskripsi:</label>
+      <textarea id="sDesc" rows="3"></textarea>
+      <button onclick="saveServer()">Simpan</button>
+      <h3>Live Info:</h3>
+      <p><b>Status:</b> <span id="liveSStatus">-</span></p>
+      <p><b>Deskripsi:</b> <span id="liveSDesc">-</span></p>
+    </div>
+  <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! JANGAN DIAMBIL  ©COPIRIGHT ADITdeveloper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+    <div id="akun" class="container box" style="display:none;">
+      <h2>Akun Pengguna</h2>
+      <table>
+        <thead><tr><th>UID</th><th>Username</th><th>Email</th></tr></thead>
+        <tbody id="userList"></tbody>
+      </table>
+    </div>
+  <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! JANGAN DIAMBIL  ©COPIRIGHT ADITdeveloper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+    <div id="event" class="container box" style="display:none;">
+      <h2>Event</h2>
+      <table>
+        <thead><tr><th>ID</th><th>Nama Event</th><th>Waktu</th></tr></thead>
+        <tbody id="eventList"></tbody>
+      </table>
+    </div>
+  </div>
+  <!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! JANGAN DIAMBIL  ©COPIRIGHT ADITdeveloper !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+  <script>
+    const pw = "SUPERBATTLE2025";
+    const cfg = {
+      apiKey: "AIzaSyCYLbIFVfaO487KN2z4ABDPTx1j0mBHF-o",
+      authDomain: "uvologin-1.firebaseapp.com",
+      databaseURL: "https://uvologin-1-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "uvologin-1"
+    };
+    firebase.initializeApp(cfg);
+    const db = firebase.database();
+
+    function login(){
+      const val = document.getElementById("pwd").value;
+      if(val===pw){
+        document.getElementById("login").style.display="none";
+        document.getElementById("dashboard").style.display="block";
+        loadServer(); loadAkun(); loadEvent();
+      } else document.getElementById("err").innerText="Password salah!";
+    }
+
+    function showTab(id){
+      ["home","server","akun","event"].forEach(i=>{
+        document.getElementById(i).style.display = (i===id)?"block":"none";
+      });
+      document.querySelectorAll("nav button").forEach(btn=>{
+        btn.classList.toggle("active", btn.textContent.toLowerCase()===id);
+      });
+    }
+
+    function loadServer(){
+      db.ref("server").on("value",snap=>{
+        const d=snap.val();
+        if(d){
+          document.getElementById("sStatus").value=d.status;
+          document.getElementById("sDesc").value=d.deskripsi;
+          document.getElementById("liveSStatus").innerText=d.status;
+          document.getElementById("liveSDesc").innerText=d.deskripsi;
+        }
+      });
+    }
+    function saveServer(){
+      const s = document.getElementById("sStatus").value;
+      const d = document.getElementById("sDesc").value;
+      db.ref("server").set({status:s,deskripsi:d});
+    }
+
+    function loadAkun(){
+      db.ref("users").on("value", snap=>{
+        const v = snap.val()||{};
+        const html = Object.entries(v).map(([uid,u])=>{
+          return `<tr><td>${uid}</td><td>${u.username||'-'}</td><td>${u.email||'-'}</td></tr>`;
+        }).join("");
+        document.getElementById("userList").innerHTML = html;
+      });
+    }
+
+    function loadEvent(){
+      db.ref("events").on("value", snap=>{
+        const v = snap.val()||{};
+        const html = Object.entries(v).map(([k,e])=>{
+          return `<tr><td>${k}</td><td>${e.name||'-'}</td><td>${e.time||'-'}</td></tr>`;
+        }).join("");
+        document.getElementById("eventList").innerHTML = html;
+      });
+    }
+
+  </script>
+</body>
+</html>
