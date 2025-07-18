@@ -88,6 +88,26 @@
             text-shadow: 0 0 10px rgba(106, 0, 244, 0.5);
         }
 
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-right: auto;
+            margin-left: 0;
+        }
+
+        .back-btn:hover {
+            background: var(--warning);
+            color: var(--dark);
+            box-shadow: 0 0 15px var(--warning);
+        }
+
         .guide-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid var(--accent);
@@ -98,6 +118,7 @@
             font-family: 'Orbitron', sans-serif;
             font-weight: bold;
             transition: all 0.3s ease;
+            margin-left: 1rem;
         }
 
         .guide-btn:hover {
@@ -487,10 +508,6 @@
             animation: spin 1s linear infinite;
         }
 
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-
         .success-modal {
             position: fixed;
             top: 0;
@@ -530,11 +547,6 @@
             color: var(--accent);
             margin-bottom: 1rem;
             animation: bounce 1s infinite alternate;
-        }
-
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-20px); }
         }
 
         .success-title {
@@ -587,6 +599,85 @@
             transform: translateY(-3px);
         }
 
+        .exit-confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1004;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .exit-confirm-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .exit-confirm-content {
+            background: var(--darker);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            padding: 2rem;
+            border: 2px solid var(--warning);
+            box-shadow: 0 0 30px rgba(255, 159, 67, 0.5);
+            text-align: center;
+        }
+
+        .exit-confirm-title {
+            font-size: 1.5rem;
+            color: var(--warning);
+            margin-bottom: 1.5rem;
+        }
+
+        .exit-confirm-text {
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .exit-confirm-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .exit-confirm-btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .exit-confirm-btn.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .exit-confirm-btn.cancel:hover {
+            background: var(--accent);
+            color: var(--dark);
+        }
+
+        .exit-confirm-btn.confirm {
+            background: var(--warning);
+            border: 1px solid var(--warning);
+            color: var(--dark);
+        }
+
+        .exit-confirm-btn.confirm:hover {
+            box-shadow: 0 0 15px var(--warning);
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
@@ -613,6 +704,14 @@
 
             .success-title {
                 font-size: 1.5rem;
+            }
+
+            .exit-confirm-buttons {
+                flex-direction: column;
+            }
+
+            .exit-confirm-btn {
+                width: 100%;
             }
         }
 
@@ -645,11 +744,23 @@
             from { text-shadow: 0 0 5px var(--light); }
             to { text-shadow: 0 0 10px var(--accent), 0 0 20px var(--secondary); }
         }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
             <div class="logo">
                 <div class="logo-text">SUPERBATTLE ROYAL</div>
             </div>
@@ -721,19 +832,19 @@
                     <h3 class="stats-title">STAT AWAL ANDA</h3>
                     <div class="stat-item">
                         <span class="stat-label">Koin:</span>
-                        <span class="stat-value">1,000</span>
+                        <span class="stat-value">0</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Diamond:</span>
-                        <span class="stat-value">50</span>
+                        <span class="stat-value">0</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Hero Awal:</span>
-                        <span class="stat-value">Rookie</span>
+                        <span class="stat-value">hero_superboy</span>
                     </div>
                     <div class="stat-item">
                         <span class="stat-label">Peringkat Awal:</span>
-                        <span class="stat-value">Perunggu V</span>
+                        <span class="stat-value">bronze1</span>
                     </div>
                 </div>
             </section>
@@ -770,10 +881,10 @@
                 <h3>Memulai Permainan</h3>
                 <p>Sebagai pemain baru, Anda akan menerima:</p>
                 <ul>
-                    <li>1,000 koin untuk membeli item dasar</li>
-                    <li>50 diamond untuk konten premium</li>
-                    <li>Hero "Rookie" untuk memulai pertarungan</li>
-                    <li>Peringkat Perunggu V - naikkan untuk menjadi yang terbaik!</li>
+                    <li>0 koin (mulai dari nol)</li>
+                    <li>0 diamond (mulai dari nol)</li>
+                    <li>Hero "hero_superboy" untuk memulai pertarungan</li>
+                    <li>Peringkat "bronze1" - naikkan untuk menjadi yang terbaik!</li>
                 </ul>
             </div>
             
@@ -784,7 +895,7 @@
                     <li><strong>Battle Royale:</strong> Bersaing melawan 99 pemain lain dalam pertandingan real-time</li>
                     <li><strong>Sistem Hero:</strong> Kumpulkan dan tingkatkan hero unik dengan kemampuan khusus</li>
                     <li><strong>Senjata & Item:</strong> Temukan dan buka perlengkapan kuat untuk mendominasi pertarungan</li>
-                    <li><strong>Sistem Peringkat:</strong> Naikkan tier dari Perunggu ke Juara Royal</li>
+                    <li><strong>Sistem Peringkat:</strong> Naikkan tier dari bronze1 ke Juara Royal</li>
                     <li><strong>Super Pass:</strong> Dapatkan hadiah dengan meningkatkan level Super Pass setiap musim</li>
                 </ul>
             </div>
@@ -815,6 +926,17 @@
             </div>
             
             <button class="continue-btn" id="continueBtn">LANJUTKAN KE GAME</button>
+        </div>
+    </div>
+
+    <div class="exit-confirm-modal" id="exitConfirmModal">
+        <div class="exit-confirm-content">
+            <h3 class="exit-confirm-title"><i class="fas fa-exclamation-triangle"></i> PERINGATAN</h3>
+            <p class="exit-confirm-text">Anda memiliki data yang belum tersimpan. Yakin ingin keluar?</p>
+            <div class="exit-confirm-buttons">
+                <button class="exit-confirm-btn cancel" id="exitCancelBtn">BATAL</button>
+                <button class="exit-confirm-btn confirm" id="exitConfirmBtn">KELUAR</button>
+            </div>
         </div>
     </div>
 
@@ -853,6 +975,7 @@
         const strengthLabel = document.getElementById('strengthLabel');
         const notification = document.getElementById('notification');
         const notificationMessage = document.getElementById('notificationMessage');
+        const backBtn = document.getElementById('backBtn');
         const guideBtn = document.getElementById('guideBtn');
         const guideModal = document.getElementById('guideModal');
         const closeGuide = document.getElementById('closeGuide');
@@ -860,6 +983,12 @@
         const successModal = document.getElementById('successModal');
         const accountDetails = document.getElementById('accountDetails');
         const continueBtn = document.getElementById('continueBtn');
+        const exitConfirmModal = document.getElementById('exitConfirmModal');
+        const exitCancelBtn = document.getElementById('exitCancelBtn');
+        const exitConfirmBtn = document.getElementById('exitConfirmBtn');
+
+        // Variabel untuk melacak perubahan form
+        let formHasChanges = false;
 
         // Indikator kekuatan password
         passwordInput.addEventListener('input', function() {
@@ -1029,22 +1158,22 @@
                     username: username,
                     password: password, // Catatan: Di aplikasi nyata, password harus di-hash
                     email: email || '',
-                    coin: 1000,
-                    diamond: 50,
+                    coin: 0,          // Koin awal 0
+                    diamond: 0,       // Diamond awal 0
                     status: "offline",
                     akun: {
                         season: 1,
                         dipakai: {
-                            hero: "Rookie"
+                            hero: "hero_superboy"  // Hero default
                         }
                     },
                     dimiliki: {
-                        hero: ["Rookie"],
-                        senjata: [],
-                        item: []
+                        hero: ["hero_superboy"], // Hanya hero_superboy yang dimiliki
+                        senjata: [],            // Senjata kosong
+                        item: []                // Item kosong
                     },
                     rank: {
-                        rank: "Bronze V",
+                        rank: "bronze1",  // Peringkat awal
                         poin: 0,
                         level: 1
                     },
@@ -1108,6 +1237,8 @@
             
             // Tampilkan modal sukses
             successModal.classList.add('active');
+            // Reset status form
+            formHasChanges = false;
         }
 
         // Tampilkan notifikasi
@@ -1127,6 +1258,23 @@
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 5000);
+        }
+
+        // Cek perubahan form
+        function setupFormChangeDetection() {
+            const inputs = [usernameInput, passwordInput, confirmPasswordInput, emailInput];
+            
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    if (!formHasChanges) {
+                        formHasChanges = 
+                            usernameInput.value.trim() !== '' || 
+                            passwordInput.value !== '' || 
+                            confirmPasswordInput.value !== '' || 
+                            emailInput.value.trim() !== '';
+                    }
+                });
+            });
         }
 
         // Submit form
@@ -1171,6 +1319,25 @@
             }
         });
 
+        // Tombol kembali
+        backBtn.addEventListener('click', function() {
+            if (formHasChanges) {
+                exitConfirmModal.classList.add('active');
+            } else {
+                window.location.href = 'index.html'; // Ganti dengan halaman sebelumnya
+            }
+        });
+
+        // Modal konfirmasi keluar
+        exitCancelBtn.addEventListener('click', function() {
+            exitConfirmModal.classList.remove('active');
+        });
+
+        exitConfirmBtn.addEventListener('click', function() {
+            exitConfirmModal.classList.remove('active');
+            window.location.href = 'index.html'; // Ganti dengan halaman sebelumnya
+        });
+
         // Modal panduan
         guideBtn.addEventListener('click', function() {
             guideModal.classList.add('active');
@@ -1178,13 +1345,6 @@
 
         closeGuide.addEventListener('click', function() {
             guideModal.classList.remove('active');
-        });
-
-        // Tutup modal saat klik di luar
-        guideModal.addEventListener('click', function(e) {
-            if (e.target === guideModal) {
-                guideModal.classList.remove('active');
-            }
         });
 
         // Tombol lanjutkan di modal sukses
@@ -1203,8 +1363,23 @@
                 if (successModal.classList.contains('active')) {
                     successModal.classList.remove('active');
                 }
+                if (exitConfirmModal.classList.contains('active')) {
+                    exitConfirmModal.classList.remove('active');
+                }
             }
         });
+
+        // Deteksi sebelum unload halaman
+        window.addEventListener('beforeunload', function(e) {
+            if (formHasChanges) {
+                e.preventDefault();
+                e.returnValue = 'Anda memiliki data yang belum tersimpan. Yakin ingin meninggalkan halaman?';
+                return e.returnValue;
+            }
+        });
+
+        // Setup deteksi perubahan form
+        setupFormChangeDetection();
 
         // Animasi awal
         setTimeout(() => {
