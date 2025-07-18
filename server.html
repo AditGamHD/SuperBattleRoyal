@@ -429,26 +429,23 @@
             const status = serverData.status || 'offline';
             const description = serverData.deskripsi || 'Tidak ada informasi tambahan.';
             
-            let statusClass = '';
+            let statusClass = status;
             let statusIcon = '';
             let statusTitle = '';
             let statusColor = '';
             
-            switch (status) {
+            switch (status.toLowerCase()) {
                 case 'online':
-                    statusClass = 'online';
                     statusIcon = 'fa-check-circle';
                     statusTitle = 'Server Online';
                     statusColor = 'var(--accent-green)';
                     break;
                 case 'offline':
-                    statusClass = 'offline';
                     statusIcon = 'fa-exclamation-triangle';
                     statusTitle = 'Server Offline';
                     statusColor = 'var(--accent-red)';
                     break;
                 case 'maintenance':
-                    statusClass = 'maintenance';
                     statusIcon = 'fa-tools';
                     statusTitle = 'Sedang Maintenance';
                     statusColor = 'var(--accent-orange)';
@@ -456,7 +453,7 @@
                 default:
                     statusClass = 'offline';
                     statusIcon = 'fa-question-circle';
-                    statusTitle = 'Status Tidak Dikenal';
+                    statusTitle = status.charAt(0).toUpperCase() + status.slice(1); // Capitalize first letter
                     statusColor = 'var(--text-secondary)';
             }
             
@@ -468,7 +465,7 @@
                         </div>
                         <div>
                             <h2 class="status-title">${statusTitle}</h2>
-                            <p class="status-subtitle">Status saat ini: <span style="color: ${statusColor}">${status}</span></p>
+                            <p class="status-subtitle">Status: <span style="color: ${statusColor}; font-weight: 500;">${status}</span></p>
                         </div>
                     </div>
                     <p class="status-description">
