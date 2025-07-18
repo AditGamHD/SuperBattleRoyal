@@ -1,0 +1,39 @@
+{
+  "events": [
+    {
+      "id_event": 1,
+      "judul": "Konser Musik",
+      "gambar": "https://example.com/konser-musik.jpg",
+      "deskripsi": "Konser musik yang menampilkan penampilan dari artis-artis terkenal.",
+      "tanggal": "2025-08-01"
+    },
+    {
+      "id_event": 2,
+      "judul": "Festival Makanan",
+      "gambar": "https://example.com/festival-makanan.jpg",
+      "deskripsi": "Festival makanan yang menampilkan berbagai jenis makanan dari seluruh dunia.",
+      "tanggal": "2025-07-25"
+    },
+    {
+      "id_event": 3,
+      "judul": "Pameran Seni",
+      "gambar": "https://example.com/pameran-seni.jpg",
+      "deskripsi": "Pameran seni yang menampilkan karya-karya seni dari seniman-seniman lokal dan internasional.",
+      "tanggal": "2025-09-10"
+    },
+    {
+      "id_event": 4,
+      "judul": "Marathon Kota",
+      "gambar": "https://example.com/marathon-kota.jpg",
+      "deskripsi": "Marathon kota yang menantang peserta untuk berlari sejauh 42 km di sekitar kota.",
+      "tanggal": "2025-10-15"
+    },
+    {
+      "id_event": 5,
+      "judul": "Konferensi Teknologi",
+      "gambar": "https://example.com/konferensi-teknologi.jpg",
+      "deskripsi": "Konferensi teknologi yang membahas tentang perkembangan teknologi terkini dan masa depan.",
+      "tanggal": "2025-11-20"
+    }
+  ]
+}
