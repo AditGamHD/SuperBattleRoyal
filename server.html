@@ -1,588 +1,552 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Status - Super Battle Royal</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Server Status | SUPERBATTLE</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent-green: #4caf50;
+            --accent-red: #f44336;
+            --accent-orange: #ff9800;
+            --accent-blue: #2196f3;
+            --accent-purple: #9c27b0;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        :root {
-            --primary: #2c3e50;
-            --secondary: #3498db;
-            --online: #2ecc71;
-            --maintenance: #f39c12;
-            --update: #3498db;
-            --error: #e74c3c;
-            --dark: #1a2530;
-            --light: #ecf0f1;
-            --card-bg: #fff;
-            --shadow: rgba(0, 0, 0, 0.1);
         }
 
         body {
-            background: linear-gradient(135deg, #1a2530, #2c3e50);
-            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            padding: 20px;
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header Styles */
-        header {
+        .navbar {
+            background: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
-            margin-bottom: 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            animation: fadeInDown 0.8s ease-out;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: var(--shadow);
         }
 
         .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 0.5rem;
         }
 
-        .logo i {
-            font-size: 28px;
-            color: var(--secondary);
-        }
-
-        .logo h1 {
-            font-size: 24px;
-            font-weight: 700;
-            background: linear-gradient(to right, #3498db, #2ecc71);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--accent-purple), #e91e63);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .back-btn {
             background: rgba(255, 255, 255, 0.1);
-            color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: 500;
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-family: inherit;
+            font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(10px);
+            gap: 0.5rem;
+            transition: var(--transition);
         }
 
         .back-btn:hover {
-            background: var(--secondary);
+            background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* Server Status Card */
-        .server-status-card {
-            background: var(--card-bg);
+        .container {
+            padding: 7rem 2rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s 0.2s forwards;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #e91e63, var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .status-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s 0.4s forwards;
+        }
+
+        .status-card {
+            background: var(--bg-secondary);
             border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            animation: slideInUp 0.8s ease-out;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
             position: relative;
             overflow: hidden;
-            color: var(--dark);
         }
 
-        .server-status-card::before {
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .status-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 8px;
+            width: 6px;
             height: 100%;
-            background: var(--online);
-            transition: all 0.5s ease;
+            transition: var(--transition);
         }
 
-        .server-status-card.maintenance::before {
-            background: var(--maintenance);
+        .status-card.online::before {
+            background-color: var(--accent-green);
         }
 
-        .server-status-card.update::before {
-            background: var(--update);
+        .status-card.offline::before {
+            background-color: var(--accent-red);
         }
 
-        .server-status-card.error::before {
-            background: var(--error);
+        .status-card.maintenance::before {
+            background-color: var(--accent-orange);
         }
 
         .status-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            font-size: 1.8rem;
+            transition: var(--transition);
+        }
+
+        .status-icon.online {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: var(--accent-green);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .status-icon.offline {
+            background-color: rgba(244, 67, 54, 0.2);
+            color: var(--accent-red);
+            box-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
+        }
+
+        .status-icon.maintenance {
+            background-color: rgba(255, 152, 0, 0.2);
+            color: var(--accent-orange);
+            box-shadow: 0 0 20px rgba(255, 152, 0, 0.3);
         }
 
         .status-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
         }
 
-        .status-indicator {
+        .status-subtitle {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .status-description {
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .status-meta {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .meta-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.5rem;
+            color: var(--text-secondary);
         }
 
-        .status-badge {
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 14px;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .meta-item i {
+            font-size: 1.2rem;
         }
 
-        .status-badge.online {
-            background: var(--online);
-        }
-
-        .status-badge.maintenance {
-            background: var(--maintenance);
-        }
-
-        .status-badge.update {
-            background: var(--update);
-        }
-
-        .status-badge.error {
-            background: var(--error);
-        }
-
-        .ping-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .ping-value {
-            font-weight: 600;
-        }
-
-        .ping-indicator {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: var(--online);
-            position: relative;
-            animation: pingPulse 1.5s infinite;
-        }
-
-        .ping-indicator.bad {
-            background-color: var(--error);
-            animation: none;
-        }
-
-        .status-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-top: 25px;
-        }
-
-        .detail-card {
-            background: rgba(52, 152, 219, 0.05);
-            border-radius: 12px;
-            padding: 20px;
-            transition: transform 0.3s ease;
-        }
-
-        .detail-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .detail-card h3 {
-            font-size: 14px;
-            color: #7f8c8d;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .detail-card p {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .maintenance-info {
-            background: rgba(243, 156, 18, 0.1);
-            border-left: 4px solid var(--maintenance);
-            padding: 15px;
-            border-radius: 0 8px 8px 0;
-            margin-top: 20px;
-            animation: pulse 2s infinite;
-        }
-
-        /* Footer */
-        footer {
-            margin-top: 60px;
-            text-align: center;
-            padding: 20px;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            animation: fadeIn 1s ease-out 0.5s both;
-        }
-
-        /* Loading State */
         .loading {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 300px;
-            gap: 20px;
+            height: 300px;
+            gap: 1rem;
         }
 
         .spinner {
             width: 50px;
             height: 50px;
             border: 5px solid rgba(255, 255, 255, 0.1);
-            border-top: 5px solid var(--secondary);
             border-radius: 50%;
+            border-top-color: var(--accent-purple);
             animation: spin 1s linear infinite;
         }
 
         .loading-text {
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.8);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
         }
 
-        /* Error State */
-        .error-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px;
-            gap: 20px;
+        .footer {
             text-align: center;
-            padding: 30px;
-            background: rgba(231, 76, 60, 0.1);
-            border-radius: 16px;
-            border: 1px solid rgba(231, 76, 60, 0.3);
+            padding: 2rem;
+            color: var(--text-secondary);
+            margin-top: auto;
+            opacity: 0;
+            animation: fadeIn 1s 1s forwards;
         }
 
-        .error-state i {
-            font-size: 48px;
-            color: var(--error);
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .error-state p {
-            max-width: 600px;
-            line-height: 1.6;
-        }
-
-        .retry-btn {
-            background: var(--error);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 15px;
-        }
-
-        .retry-btn:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
-        }
-
-        /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeInDown {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
             }
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); }
-        }
-        
-        @keyframes pingPulse {
             0% {
-                transform: scale(0.8);
-                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
-            }
-            70% {
                 transform: scale(1);
-                box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
             }
             100% {
-                transform: scale(0.8);
-                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+                transform: scale(1);
+                opacity: 1;
             }
         }
 
-        /* Responsive */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
+            .container {
+                padding: 6rem 1.5rem 1.5rem;
             }
             
-            .logo {
-                justify-content: center;
+            .header h1 {
+                font-size: 2rem;
             }
             
             .status-header {
                 flex-direction: column;
-                gap: 15px;
-                text-align: center;
+                align-items: flex-start;
             }
             
-            .status-indicator {
-                justify-content: center;
+            .status-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            
+            .status-meta {
+                flex-direction: column;
+                gap: 0.5rem;
             }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-server"></i>
-                <h1>SERVER STATUS</h1>
+    <nav class="navbar">
+        <a href="#" class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-gamepad"></i>
             </div>
-            <button class="back-btn" onclick="window.history.back()">
-                <i class="fas fa-arrow-left"></i> Kembali
-            </button>
-        </header>
-        
-        <main>
-            <div class="loading" id="loading">
+            <span>SUPERBATTLE</span>
+        </a>
+        <button class="back-btn" onclick="window.location.href='index.html'">
+            <i class="fas fa-arrow-left"></i>
+            Kembali
+        </button>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>SUPER BATTLE ROYAL SERVER</h1>
+            <p>Status server real-time untuk pengalaman gaming terbaik</p>
+        </div>
+
+        <div class="status-container" id="statusContainer">
+            <div class="loading">
                 <div class="spinner"></div>
                 <p class="loading-text">Memuat data server...</p>
             </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 ADITdeveloper. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEXAMPLEEXAMPLEEXAMPLE",
+            authDomain: "uvologin-1.firebaseapp.com",
+            databaseURL: "https://uvologin-1-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "uvologin-1",
+            storageBucket: "uvologin-1.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abc123def456example"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Reference to your database
+        const serverRef = database.ref('server');
+
+        // Function to update the UI based on server status
+        function updateServerStatus(snapshot) {
+            const serverData = snapshot.val();
+            const statusContainer = document.getElementById('statusContainer');
             
-            <section class="server-status-card" id="server-card" style="display: none;">
-                <div class="status-header">
-                    <h2 class="status-title">Status Server Super Battle Royal</h2>
-                    <div class="status-indicator">
-                        <div class="status-badge" id="status-badge">Online</div>
-                        <div class="ping-container">
-                            <span class="ping-indicator" id="ping-indicator"></span>
-                            <span>Ping: <span id="ping-value" class="ping-value">42ms</span></span>
+            if (!serverData) {
+                statusContainer.innerHTML = `
+                    <div class="status-card offline">
+                        <div class="status-header">
+                            <div class="status-icon offline">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div>
+                                <h2 class="status-title">Data Tidak Tersedia</h2>
+                                <p class="status-subtitle">Tidak dapat memuat data server</p>
+                            </div>
+                        </div>
+                        <p class="status-description">
+                            Sistem tidak dapat terhubung ke database atau data server tidak ditemukan. 
+                            Silakan coba lagi nanti atau hubungi administrator.
+                        </p>
+                        <div class="status-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span>Terakhir diperiksa: ${new Date().toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const status = serverData.status || 'offline';
+            const description = serverData.deskripsi || 'Tidak ada informasi tambahan.';
+            
+            let statusClass = '';
+            let statusIcon = '';
+            let statusTitle = '';
+            let statusColor = '';
+            
+            switch (status) {
+                case 'online':
+                    statusClass = 'online';
+                    statusIcon = 'fa-check-circle';
+                    statusTitle = 'Server Online';
+                    statusColor = 'var(--accent-green)';
+                    break;
+                case 'offline':
+                    statusClass = 'offline';
+                    statusIcon = 'fa-exclamation-triangle';
+                    statusTitle = 'Server Offline';
+                    statusColor = 'var(--accent-red)';
+                    break;
+                case 'maintenance':
+                    statusClass = 'maintenance';
+                    statusIcon = 'fa-tools';
+                    statusTitle = 'Sedang Maintenance';
+                    statusColor = 'var(--accent-orange)';
+                    break;
+                default:
+                    statusClass = 'offline';
+                    statusIcon = 'fa-question-circle';
+                    statusTitle = 'Status Tidak Dikenal';
+                    statusColor = 'var(--text-secondary)';
+            }
+            
+            statusContainer.innerHTML = `
+                <div class="status-card ${statusClass} pulse">
+                    <div class="status-header">
+                        <div class="status-icon ${statusClass}">
+                            <i class="fas ${statusIcon}"></i>
+                        </div>
+                        <div>
+                            <h2 class="status-title">${statusTitle}</h2>
+                            <p class="status-subtitle">Status saat ini: <span style="color: ${statusColor}">${status}</span></p>
+                        </div>
+                    </div>
+                    <p class="status-description">
+                        ${description}
+                    </p>
+                    <div class="status-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Diperbarui: ${new Date().toLocaleString()}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>Update Real-time</span>
                         </div>
                     </div>
                 </div>
                 
-                <div class="status-message">
-                    <h3>PESAN STATUS</h3>
-                    <p id="status-message">Server berjalan normal. Selamat bermain!</p>
-                </div>
-                
-                <div class="status-details">
-                    <div class="detail-card">
-                        <h3>Versi Minimum</h3>
-                        <p id="min-version">1.0.0</p>
+                <div class="status-card">
+                    <div class="status-header">
+                        <div class="status-icon" style="background-color: rgba(156, 39, 176, 0.2); color: var(--accent-purple); box-shadow: 0 0 20px rgba(156, 39, 176, 0.3);">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div>
+                            <h2 class="status-title">Lokasi Server</h2>
+                            <p class="status-subtitle">Informasi fisik server</p>
+                        </div>
                     </div>
-                    <div class="detail-card">
-                        <h3>Waktu Server</h3>
-                        <p id="server-time">Loading...</p>
+                    <p class="status-description">
+                        Server SUPER BATTLE ROYAL berlokasi di Mojokerto, Jawa Timur, Indonesia. 
+                        Didukung oleh infrastruktur berkinerja tinggi untuk pengalaman gaming yang mulus.
+                    </p>
+                    <div class="status-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Mojokerto, Jawa Timur</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-flag"></i>
+                            <span>Indonesia</span>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="maintenance-info" id="maintenance-info" style="display: none;">
-                    <h3>JADWAL MAINTENANCE</h3>
-                    <p>Mulai: <span id="maintenance-start">-</span></p>
-                    <p>Selesai: <span id="maintenance-end">-</span></p>
+            `;
+        }
+
+        // Listen for value changes
+        serverRef.on('value', (snapshot) => {
+            updateServerStatus(snapshot);
+        }, (error) => {
+            console.error("Error reading data: ", error);
+            document.getElementById('statusContainer').innerHTML = `
+                <div class="status-card offline">
+                    <div class="status-header">
+                        <div class="status-icon offline">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div>
+                            <h2 class="status-title">Koneksi Error</h2>
+                            <p class="status-subtitle">Gagal terhubung ke database</p>
+                        </div>
+                    </div>
+                    <p class="status-description">
+                        Terjadi kesalahan saat mencoba terhubung ke server database. 
+                        Silakan periksa koneksi internet Anda atau coba lagi nanti.
+                    </p>
+                    <div class="status-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Terakhir diperiksa: ${new Date().toLocaleString()}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-bug"></i>
+                            <span>Error: ${error.message}</span>
+                        </div>
+                    </div>
                 </div>
-            </section>
-            
-            <div class="error-state" id="error-state" style="display: none;">
-                <i class="fas fa-exclamation-triangle"></i>
-                <h3>Gagal Memuat Data Server</h3>
-                <p>Terjadi kesalahan saat mencoba mengambil data dari server. Pastikan Anda terhubung ke internet dan coba lagi.</p>
-                <button class="retry-btn" id="retry-btn">
-                    <i class="fas fa-sync-alt"></i> Coba Lagi
-                </button>
-            </div>
-        </main>
-        
-        <footer>
-            <p>© 2025 ADITdeveloper. Hak Cipta Dilindungi.</p>
-        </footer>
-    </div>
-    
-    <script>
-        // Fungsi untuk mengambil data server dari GitHub menggunakan proxy CORS
-        async function fetchServerData() {
-            // Menggunakan proxy CORS untuk menghindari masalah CORS
-            const proxyUrl = 'https://api.allorigins.win/raw?url=';
-            const targetUrl = 'https://raw.githubusercontent.com/AditGamHD/SuperBattleRoyal/main/Data/server.json';
-            
-            try {
-                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('Error fetching server data:', error);
-                throw error;
-            }
-        }
-        
-        // Update server time
-        function updateServerTime() {
-            const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                timeZoneName: 'short'
-            };
-            document.getElementById('server-time').textContent = now.toLocaleDateString('id-ID', options);
-        }
-        
-        // Simulate ping
-        function simulatePing() {
-            const ping = Math.floor(Math.random() * 30) + 20;
-            document.getElementById('ping-value').textContent = ping + 'ms';
-            
-            // Update ping indicator color based on ping
-            const pingIndicator = document.getElementById('ping-indicator');
-            if (ping > 100) {
-                pingIndicator.className = 'ping-indicator bad';
-            } else {
-                pingIndicator.className = 'ping-indicator';
-            }
-        }
-        
-        // Update UI dengan data server
-        function updateServerStatus(serverData) {
-            // Update status badge
-            const statusBadge = document.getElementById('status-badge');
-            statusBadge.className = 'status-badge ' + serverData.status;
-            statusBadge.textContent = serverData.status;
-            
-            // Update card border based on status
-            const serverCard = document.getElementById('server-card');
-            serverCard.className = 'server-status-card ' + serverData.status;
-            
-            // Update status message
-            document.getElementById('status-message').textContent = serverData.msg;
-            
-            // Update min version
-            document.getElementById('min-version').textContent = serverData.versi;
-            
-            // Update maintenance info if available
-            const maintenanceInfo = document.getElementById('maintenance-info');
-            if (serverData.maintenance_start && serverData.maintenance_end) {
-                maintenanceInfo.style.display = 'block';
-                document.getElementById('maintenance-start').textContent = serverData.maintenance_start;
-                document.getElementById('maintenance-end').textContent = serverData.maintenance_end;
-            } else {
-                maintenanceInfo.style.display = 'none';
-            }
-        }
-        
-        // Initial calls
-        updateServerTime();
-        simulatePing();
-        
-        // Update time every second
-        setInterval(updateServerTime, 1000);
-        setInterval(simulatePing, 5000);
-        
-        // Fetch server data and update UI
-        async function loadServerData() {
-            const loadingElement = document.getElementById('loading');
-            const serverCard = document.getElementById('server-card');
-            const errorState = document.getElementById('error-state');
-            
-            try {
-                // Show loading
-                loadingElement.style.display = 'flex';
-                serverCard.style.display = 'none';
-                errorState.style.display = 'none';
-                
-                const serverData = await fetchServerData();
-                
-                // Hide loading, show server card
-                loadingElement.style.display = 'none';
-                serverCard.style.display = 'block';
-                
-                updateServerStatus(serverData);
-            } catch (error) {
-                console.error('Failed to load server data:', error);
-                // Show error state
-                loadingElement.style.display = 'none';
-                serverCard.style.display = 'none';
-                errorState.style.display = 'flex';
-            }
-        }
-        
-        // Add event listener for retry button
-        document.getElementById('retry-btn').addEventListener('click', loadServerData);
-        
-        // Initial load
-        document.addEventListener('DOMContentLoaded', loadServerData);
+            `;
+        });
     </script>
 </body>
-    </html>
+</html>
