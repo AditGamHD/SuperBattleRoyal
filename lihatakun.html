@@ -1,1 +1,1391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>SUPERBATTLE Account Lookup</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ff-primary: #FF8C00;
+      --ff-secondary: #FF5E00;
+      --ff-dark: #121212;
+      --ff-darker: #0A0A0A;
+      --ff-gray: #2A2A2A;
+      --ff-light: #E0E0E0;
+      --ff-success: #4CAF50;
+      --ff-danger: #F44336;
+      --ff-info: #2196F3;
+      --ff-warning: #FFC107;
+      --ff-rank-bronze: #CD7F32;
+      --ff-rank-silver: #C0C0C0;
+      --ff-rank-gold: #FFD700;
+      --ff-rank-platinum: #E5E4E2;
+      --ff-rank-diamond: #B9F2FF;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      background: var(--ff-dark);
+      color: var(--ff-light);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* Header with animated gradient */
+    .header {
+      background: linear-gradient(135deg, var(--ff-darker), var(--ff-gray));
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      border-bottom: 2px solid var(--ff-primary);
+      position: relative;
+      z-index: 100;
+      animation: headerGlow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes headerGlow {
+      0% { box-shadow: 0 4px 15px rgba(255, 140, 0, 0.3); }
+      100% { box-shadow: 0 4px 25px rgba(255, 94, 0, 0.6); }
+    }
+    
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--ff-primary), transparent);
+      animation: borderPulse 2s infinite;
+    }
+    
+    @keyframes borderPulse {
+      0% { opacity: 0.7; }
+      50% { opacity: 1; }
+      100% { opacity: 0.7; }
+    }
+    
+    .back-btn {
+      background: var(--ff-primary);
+      color: black;
+      padding: 8px 15px;
+      border-radius: 5px;
+      margin-right: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+      border: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .back-btn::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255,255,255,0) 45%,
+        rgba(255,255,255,0.3) 50%,
+        rgba(255,255,255,0) 55%
+      );
+      transform: rotate(30deg);
+      animation: buttonShine 3s infinite;
+    }
+    
+    @keyframes buttonShine {
+      0% { transform: translateX(-100%) rotate(30deg); }
+      100% { transform: translateX(100%) rotate(30deg); }
+    }
+    
+    .back-btn:hover {
+      background: var(--ff-secondary);
+      transform: translateY(-2px) scale(1.05);
+    }
+    
+    .title {
+      font-size: 22px;
+      font-weight: bold;
+      background: linear-gradient(to right, #FFD700, var(--ff-primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      flex-grow: 1;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+      animation: titlePulse 2s infinite alternate;
+    }
+    
+    @keyframes titlePulse {
+      0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+      100% { text-shadow: 0 0 20px rgba(255, 140, 0, 0.8); }
+    }
+    
+    /* Main Container with parallax effect */
+    .container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      animation: fadeIn 0.8s ease;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Search Section with floating effect */
+    .search-section {
+      background: var(--ff-darker);
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border: 1px solid #333;
+      transition: transform 0.3s ease;
+      animation: float 6s ease-in-out infinite;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255,140,0,0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255,140,0,0.1) 0%, transparent 20%);
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .search-title {
+      color: var(--ff-primary);
+      font-size: 18px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-shadow: 0 0 5px rgba(255, 140, 0, 0.5);
+    }
+    
+    .search-bar {
+      display: flex;
+      position: relative;
+    }
+    
+    .search-input {
+      flex-grow: 1;
+      padding: 14px 20px;
+      border: 2px solid #333;
+      border-radius: 30px 0 0 30px;
+      outline: none;
+      background: var(--ff-gray);
+      color: white;
+      font-size: 16px;
+      transition: all 0.3s;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }
+    
+    .search-input:focus {
+      border-color: var(--ff-primary);
+      box-shadow: 0 0 15px rgba(255, 140, 0, 0.5), inset 0 0 10px rgba(0,0,0,0.5);
+      animation: inputPulse 1.5s infinite;
+    }
+    
+    @keyframes inputPulse {
+      0% { box-shadow: 0 0 5px rgba(255, 140, 0, 0.5), inset 0 0 10px rgba(0,0,0,0.5); }
+      50% { box-shadow: 0 0 20px rgba(255, 140, 0, 0.8), inset 0 0 10px rgba(0,0,0,0.5); }
+      100% { box-shadow: 0 0 5px rgba(255, 140, 0, 0.5), inset 0 0 10px rgba(0,0,0,0.5); }
+    }
+    
+    .search-btn {
+      padding: 0 25px;
+      background: linear-gradient(to bottom, var(--ff-primary), var(--ff-secondary));
+      border: none;
+      color: black;
+      border-radius: 0 30px 30px 0;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .search-btn:hover {
+      background: linear-gradient(to bottom, var(--ff-secondary), #FF4500);
+      transform: scale(1.05);
+    }
+    
+    .search-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255,255,255,0) 45%,
+        rgba(255,255,255,0.3) 50%,
+        rgba(255,255,255,0) 55%
+      );
+      transform: rotate(30deg);
+      animation: buttonShine 3s infinite;
+    }
+    
+    /* Results Section with animated background */
+    .results-section {
+      background: var(--ff-darker);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border: 1px solid #333;
+      min-height: 200px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .results-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(45deg, transparent 48%, rgba(255,140,0,0.1) 49%, rgba(255,140,0,0.1) 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, rgba(255,140,0,0.1) 49%, rgba(255,140,0,0.1) 51%, transparent 52%);
+      background-size: 20px 20px;
+      opacity: 0.3;
+      animation: gridMove 50s linear infinite;
+    }
+    
+    @keyframes gridMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 1000px 1000px; }
+    }
+    
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #333;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .results-title {
+      color: var(--ff-primary);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .results-count {
+      background: var(--ff-gray);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+      animation: countPulse 2s infinite;
+    }
+    
+    @keyframes countPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .user-list {
+      display: grid;
+      gap: 15px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* User Card with 3D tilt effect */
+    .user-card {
+      background: linear-gradient(to right, var(--ff-gray), var(--ff-darker));
+      border-radius: 10px;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s;
+      border-left: 4px solid var(--ff-primary);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transform: perspective(500px);
+    }
+    
+    .user-card:hover {
+      transform: perspective(500px) rotateY(5deg) translateY(-5px);
+      box-shadow: 0 10px 20px rgba(255, 140, 0, 0.3);
+    }
+    
+    .user-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 140, 0, 0.1) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    
+    .user-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--ff-primary);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    
+    .user-card:hover::after {
+      transform: scaleX(1);
+    }
+    
+    .user-info {
+      flex-grow: 1;
+    }
+    
+    .user-name {
+      font-weight: bold;
+      color: var(--ff-light);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Orbitron', sans-serif;
+    }
+    
+    .user-id {
+      color: #AAA;
+      font-size: 14px;
+      animation: textFlicker 5s infinite alternate;
+    }
+    
+    @keyframes textFlicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+      }
+      20%, 22%, 24%, 55% {
+        opacity: 0.5;
+      }
+    }
+    
+    .user-stats {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .stat-item {
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .user-card:hover .stat-item {
+      transform: translateY(-3px);
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #AAA;
+    }
+    
+    .stat-value {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    .user-status {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+    }
+    
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(0.95); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(0.95); }
+    }
+    
+    .status-online {
+      background: var(--ff-success);
+      box-shadow: 0 0 5px var(--ff-success);
+    }
+    
+    .status-offline {
+      background: var(--ff-danger);
+      box-shadow: 0 0 5px var(--ff-danger);
+    }
+    
+    .view-btn {
+      background: var(--ff-info);
+      color: white;
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .view-btn:hover {
+      background: #1976D2;
+      transform: scale(1.05);
+    }
+    
+    .view-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255,255,255,0) 45%,
+        rgba(255,255,255,0.3) 50%,
+        rgba(255,255,255,0) 55%
+      );
+      transform: rotate(30deg);
+      animation: buttonShine 3s infinite;
+    }
+    
+    /* Profile Scene with advanced animations */
+    .profile-scene {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      backdrop-filter: blur(5px);
+    }
+    
+    .profile-scene.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .profile-container {
+      background: linear-gradient(to bottom, var(--ff-darker), var(--ff-gray));
+      border-radius: 15px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border: 1px solid #333;
+      transform: translateY(20px) rotateX(5deg);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      position: relative;
+      opacity: 0;
+    }
+    
+    .profile-scene.active .profile-container {
+      transform: translateY(0) rotateX(0);
+      opacity: 1;
+    }
+    
+    .profile-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(135deg, transparent 0%, rgba(255,140,0,0.05) 50%, transparent 100%);
+      pointer-events: none;
+      animation: profileShine 8s infinite;
+    }
+    
+    @keyframes profileShine {
+      0% { background-position: -100% -100%; }
+      100% { background-position: 100% 100%; }
+    }
+    
+    .profile-header {
+      background: linear-gradient(to right, var(--ff-darker), var(--ff-gray));
+      padding: 20px;
+      border-bottom: 2px solid var(--ff-primary);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    
+    .profile-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .profile-name {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--ff-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Orbitron', sans-serif;
+      text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+      animation: nameGlow 2s infinite alternate;
+    }
+    
+    @keyframes nameGlow {
+      0% { text-shadow: 0 0 5px rgba(255, 140, 0, 0.5); }
+      100% { text-shadow: 0 0 15px rgba(255, 140, 0, 0.8); }
+    }
+    
+    .profile-id {
+      color: #AAA;
+      font-size: 16px;
+      margin-top: 5px;
+      animation: textFlicker 5s infinite alternate;
+    }
+    
+    .close-btn {
+      background: var(--ff-danger);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .close-btn:hover {
+      background: #D32F2F;
+      transform: rotate(90deg) scale(1.1);
+    }
+    
+    .close-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255,255,255,0) 45%,
+        rgba(255,255,255,0.3) 50%,
+        rgba(255,255,255,0) 55%
+      );
+      transform: rotate(30deg);
+      animation: buttonShine 3s infinite;
+    }
+    
+    .profile-content {
+      padding: 20px;
+    }
+    
+    .profile-section {
+      margin-bottom: 25px;
+      animation: sectionFadeIn 0.5s ease forwards;
+      opacity: 0;
+    }
+    
+    @keyframes sectionFadeIn {
+      to { opacity: 1; }
+    }
+    
+    .profile-section:nth-child(1) { animation-delay: 0.2s; }
+    .profile-section:nth-child(2) { animation-delay: 0.4s; }
+    .profile-section:nth-child(3) { animation-delay: 0.6s; }
+    
+    .section-title {
+      color: var(--ff-primary);
+      font-size: 18px;
+      margin-bottom: 15px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 50px;
+      height: 2px;
+      background: var(--ff-primary);
+      animation: titleUnderline 2s infinite alternate;
+    }
+    
+    @keyframes titleUnderline {
+      0% { width: 50px; }
+      100% { width: 100px; }
+    }
+    
+    .section-title i {
+      font-size: 20px;
+      animation: iconBounce 2s infinite;
+    }
+    
+    @keyframes iconBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .info-card {
+      background: var(--ff-gray);
+      border-radius: 8px;
+      padding: 15px;
+      border-left: 3px solid var(--ff-primary);
+      transition: all 0.3s;
+      transform-style: preserve-3d;
+      transform: perspective(500px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+    
+    .info-card:hover {
+      transform: perspective(500px) translateZ(10px);
+      box-shadow: 0 5px 15px rgba(255,140,0,0.3);
+    }
+    
+    .info-label {
+      color: #AAA;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    
+    .info-value {
+      font-weight: bold;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+    
+    .info-card:hover .info-value {
+      color: var(--ff-primary);
+      transform: translateX(5px);
+    }
+    
+    .rank-value {
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+    
+    .rank-bronze { color: var(--ff-rank-bronze); text-shadow: 0 0 5px rgba(205, 127, 50, 0.5); }
+    .rank-silver { color: var(--ff-rank-silver); text-shadow: 0 0 5px rgba(192, 192, 192, 0.5); }
+    .rank-gold { color: var(--ff-rank-gold); text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+    .rank-platinum { color: var(--ff-rank-platinum); text-shadow: 0 0 5px rgba(229, 228, 226, 0.5); }
+    .rank-diamond { color: var(--ff-rank-diamond); text-shadow: 0 0 5px rgba(185, 242, 255, 0.5); }
+    
+    .hero-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: var(--ff-gray);
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 15px;
+      transition: all 0.3s;
+      transform-style: preserve-3d;
+      transform: perspective(500px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,140,0,0.3);
+    }
+    
+    .hero-section:hover {
+      transform: perspective(500px) rotateY(5deg) translateZ(10px);
+      box-shadow: 0 5px 20px rgba(255,140,0,0.4);
+      border-color: var(--ff-primary);
+    }
+    
+    .hero-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--ff-darker);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: var(--ff-primary);
+      border: 2px solid var(--ff-primary);
+      animation: heroPulse 3s infinite;
+    }
+    
+    @keyframes heroPulse {
+      0% { box-shadow: 0 0 5px rgba(255,140,0,0.5); }
+      50% { box-shadow: 0 0 20px rgba(255,140,0,0.8); }
+      100% { box-shadow: 0 0 5px rgba(255,140,0,0.5); }
+    }
+    
+    .hero-info {
+      flex-grow: 1;
+    }
+    
+    .hero-name {
+      font-weight: bold;
+      color: var(--ff-primary);
+      margin-bottom: 5px;
+      font-family: 'Orbitron', sans-serif;
+    }
+    
+    .hero-desc {
+      color: #AAA;
+      font-size: 14px;
+    }
+    
+    /* Loading animations */
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 140, 0, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--ff-primary);
+      animation: spin 1s ease-in-out infinite;
+      position: relative;
+    }
+    
+    .spinner::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border: 4px solid transparent;
+      border-radius: 50%;
+      border-top-color: var(--ff-secondary);
+      animation: spinReverse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes spinReverse {
+      to { transform: rotate(-360deg); }
+    }
+    
+    .loading-text {
+      color: var(--ff-primary);
+      font-family: 'Orbitron', sans-serif;
+      animation: loadingText 2s infinite;
+    }
+    
+    @keyframes loadingText {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    
+    /* Empty State with animation */
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: #AAA;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .empty-state i {
+      font-size: 40px;
+      margin-bottom: 10px;
+      color: var(--ff-primary);
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    /* Alert Message with animation */
+    .alert-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--ff-danger);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      animation: slideIn 0.3s ease, fadeOut 0.5s ease 2s forwards;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .alert-message.success {
+      background: var(--ff-success);
+    }
+    
+    .alert-message.warning {
+      background: var(--ff-warning);
+      color: black;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .grid-container {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .user-stats {
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .profile-name {
+        font-size: 20px;
+      }
+      
+      .section-title::after {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header {
+        padding: 12px 15px;
+      }
+      
+      .back-btn {
+        padding: 6px 12px;
+        margin-right: 10px;
+        font-size: 14px;
+      }
+      
+      .title {
+        font-size: 18px;
+      }
+      
+      .search-section {
+        padding: 15px;
+      }
+      
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .user-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .view-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .profile-container {
+        width: 95%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <button class="back-btn" onclick="location.href='index.html'">
+      <i class="fas fa-arrow-left"></i> Kembali
+    </button>
+    <div class="title">SUPERBATTLE Account Lookup</div>
+  </div>
 
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Search Section -->
+    <div class="search-section">
+      <h2 class="search-title">
+        <i class="fas fa-search"></i> Cari Akun SUPERBATTLE
+      </h2>
+      <div class="search-bar">
+        <input type="text" class="search-input" id="searchInput" placeholder="Masukkan username atau ID..." onkeypress="handleKeyPress(event)">
+        <button class="search-btn" onclick="searchUser()">
+          <i class="fas fa-search"></i> Cari
+        </button>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section">
+      <div class="results-header">
+        <h3 class="results-title">
+          <i class="fas fa-users"></i> Hasil Pencarian
+        </h3>
+        <span class="results-count" id="resultsCount">0 akun</span>
+      </div>
+      
+      <div class="user-list" id="userList">
+        <div class="empty-state">
+          <i class="fas fa-users-slash"></i>
+          <p>Silakan cari username atau ID untuk melihat hasil</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Scene -->
+  <div class="profile-scene" id="profileScene">
+    <div class="profile-container">
+      <div class="profile-header">
+        <div class="profile-title">
+          <div>
+            <div class="profile-name" id="profileName">
+              <i class="fas fa-user"></i> <span id="profileUsername">Loading...</span>
+            </div>
+            <div class="profile-id" id="profileId">UID: -</div>
+          </div>
+          <button class="close-btn" onclick="closeProfile()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="profile-content" id="profileContent">
+        <div class="loading">
+          <div class="spinner"></div>
+          <div class="loading-text">MEMUAT PROFIL...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCYLbIFVfaO487KN2z4ABDPTx1j0mBHF-o",
+      authDomain: "uvologin-1.firebaseapp.com",
+      databaseURL: "https://uvologin-1-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "uvologin-1"
+    };
+    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    
+    // Handle Enter key press
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') {
+        searchUser();
+      }
+    }
+    
+    // Main search function
+    function searchUser() {
+      const searchTerm = document.getElementById('searchInput').value.trim();
+      
+      // Validate input
+      if (!searchTerm) {
+        showAlert('Masukkan username atau ID terlebih dahulu', 'warning');
+        return;
+      }
+      
+      if (searchTerm.length < 3) {
+        showAlert('Pencarian harus minimal 3 karakter', 'warning');
+        return;
+      }
+      
+      // Show loading
+      const userList = document.getElementById('userList');
+      userList.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <div class="loading-text">MENCARI AKUN...</div>
+        </div>
+      `;
+      
+      // Search in Firebase
+      db.ref('users').once('value').then(snapshot => {
+        const users = snapshot.val();
+        const results = [];
+        
+        // Search through all users
+        for (const uid in users) {
+          const user = users[uid];
+          const searchTermLower = searchTerm.toLowerCase();
+          
+          // Check multiple fields for matches
+          if (
+            uid.toLowerCase().includes(searchTermLower) || 
+            (user.username && user.username.toLowerCase().includes(searchTermLower)) || 
+            (user.rank && user.rank.rank && user.rank.rank.toLowerCase().includes(searchTermLower)) ||
+            (user.uid && user.uid.toString().includes(searchTerm))
+          ) {
+            results.push({
+              uid: uid,
+              data: user
+            });
+          }
+        }
+        
+        displayResults(results);
+        
+      }).catch(error => {
+        console.error('Error searching users:', error);
+        showAlert('Terjadi kesalahan saat mencari', 'danger');
+        userList.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Gagal memuat data. Coba lagi nanti.</p>
+          </div>
+        `;
+      });
+    }
+    
+    // Display search results
+    function displayResults(results) {
+      const userList = document.getElementById('userList');
+      const resultsCount = document.getElementById('resultsCount');
+      
+      resultsCount.textContent = `${results.length} akun ditemukan`;
+      
+      if (results.length === 0) {
+        userList.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-users-slash"></i>
+            <p>Tidak ada akun yang cocok ditemukan</p>
+            <p style="font-size:12px;margin-top:10px;">Coba dengan kata kunci berbeda</p>
+          </div>
+        `;
+        return;
+      }
+      
+      userList.innerHTML = '';
+      
+      results.forEach(user => {
+        const userCard = document.createElement('div');
+        userCard.className = 'user-card';
+        userCard.onclick = () => showProfile(user.uid);
+        
+        const isOnline = user.data.status === 'online';
+        const rank = user.data.rank?.rank || 'unknown';
+        const level = user.data.rank?.level || 1;
+        const points = user.data.rank?.poin || 0;
+        const username = user.data.username || user.uid;
+        
+        // Determine rank class for styling
+        let rankClass = 'rank-bronze';
+        if (rank.includes('silver')) rankClass = 'rank-silver';
+        else if (rank.includes('gold')) rankClass = 'rank-gold';
+        else if (rank.includes('platinum')) rankClass = 'rank-platinum';
+        else if (rank.includes('diamond')) rankClass = 'rank-diamond';
+        
+        userCard.innerHTML = `
+          <div class="user-info">
+            <div class="user-name">
+              ${username}
+              <span class="user-status">
+                <span class="status-dot ${isOnline ? 'status-online' : 'status-offline'}"></span>
+                ${isOnline ? 'Online' : 'Offline'}
+              </span>
+            </div>
+            <div class="user-id">UID: ${user.uid}</div>
+          </div>
+          <div class="user-stats">
+            <div class="stat-item">
+              <div class="stat-label">Rank</div>
+              <div class="stat-value ${rankClass}">${rank}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Level</div>
+              <div class="stat-value">${level}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Points</div>
+              <div class="stat-value">${points}</div>
+            </div>
+          </div>
+          <button class="view-btn" onclick="event.stopPropagation(); showProfile('${user.uid}')">
+            <i class="fas fa-eye"></i> Lihat
+          </button>
+        `;
+        
+        userList.appendChild(userCard);
+      });
+      
+      // Animate cards sequentially
+      const cards = document.querySelectorAll('.user-card');
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'perspective(500px) rotateY(0) translateY(0)';
+        }, index * 100);
+      });
+    }
+    
+    // Show user profile
+    function showProfile(uid) {
+      const profileScene = document.getElementById('profileScene');
+      const profileContent = document.getElementById('profileContent');
+      const profileUsername = document.getElementById('profileUsername');
+      const profileId = document.getElementById('profileId');
+      
+      // Show loading
+      profileContent.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <div class="loading-text">MEMUAT PROFIL...</div>
+        </div>
+      `;
+      
+      // Show profile scene
+      profileScene.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // Get user data
+      db.ref(`users/${uid}`).once('value').then(snapshot => {
+        const user = snapshot.val();
+        
+        if (!user) {
+          profileContent.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-exclamation-triangle"></i>
+              <p>Data pengguna tidak ditemukan</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Update profile header
+        profileUsername.textContent = user.username || uid;
+        profileId.textContent = `UID: ${uid}`;
+        
+        // Format profile data
+        const isOnline = user.status === 'online';
+        const rank = user.rank?.rank || 'unknown';
+        const level = user.rank?.level || 1;
+        const points = user.rank?.poin || 0;
+        const hero = user.akun?.dipakai?.hero || 'unknown';
+        const season = user.akun?.season || 1;
+        
+        // Determine rank class for styling
+        let rankClass = 'rank-bronze';
+        if (rank.includes('silver')) rankClass = 'rank-silver';
+        else if (rank.includes('gold')) rankClass = 'rank-gold';
+        else if (rank.includes('platinum')) rankClass = 'rank-platinum';
+        else if (rank.includes('diamond')) rankClass = 'rank-diamond';
+        
+        profileContent.innerHTML = `
+          <div class="profile-section">
+            <h3 class="section-title">
+              <i class="fas fa-id-card"></i> Informasi Akun
+            </h3>
+            <div class="grid-container">
+              <div class="info-card">
+                <div class="info-label">Status</div>
+                <div class="info-value">
+                  <span style="color: ${isOnline ? 'var(--ff-success)' : 'var(--ff-danger)'}">
+                    ${isOnline ? 'Online' : 'Offline'}
+                  </span>
+                </div>
+              </div>
+              <div class="info-card">
+                <div class="info-label">Rank</div>
+                <div class="info-value ${rankClass}">${rank}</div>
+              </div>
+              <div class="info-card">
+                <div class="info-label">Level</div>
+                <div class="info-value">${level}</div>
+              </div>
+              <div class="info-card">
+                <div class="info-label">Points</div>
+                <div class="info-value">${points}</div>
+              </div>
+              <div class="info-card">
+                <div class="info-label">Season</div>
+                <div class="info-value">${season}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="profile-section">
+            <h3 class="section-title">
+              <i class="fas fa-user-shield"></i> Hero yang Digunakan
+            </h3>
+            <div class="hero-section">
+              <div class="hero-icon">
+                <i class="fas fa-user-ninja"></i>
+              </div>
+              <div class="hero-info">
+                <div class="hero-name">${hero.replace('hero_', '').replace(/_/g, ' ')}</div>
+                <div class="hero-desc">Hero utama yang sedang digunakan</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).catch(error => {
+        console.error('Error loading profile:', error);
+        profileContent.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Gagal memuat profil</p>
+          </div>
+        `;
+      });
+    }
+    
+    // Close profile view
+    function closeProfile() {
+      const profileScene = document.getElementById('profileScene');
+      profileScene.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+    
+    // Show alert message
+    function showAlert(message, type = 'danger') {
+      const alert = document.createElement('div');
+      alert.className = `alert-message ${type}`;
+      alert.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i> ${message}
+      `;
+      
+      document.body.appendChild(alert);
+      setTimeout(() => {
+        alert.style.animation = 'fadeOut 0.5s ease forwards';
+        setTimeout(() => alert.remove(), 500);
+      }, 2000);
+    }
+    
+    // Close profile when clicking outside
+    document.getElementById('profileScene').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeProfile();
+      }
+    });
+    
+    // Initialize with some visual effects
+    window.addEventListener('load', () => {
+      // Animate search section
+      const searchSection = document.querySelector('.search-section');
+      setTimeout(() => {
+        searchSection.style.transform = 'translateY(0)';
+        searchSection.style.opacity = '1';
+      }, 300);
+      
+      // Add floating particles effect
+      createParticles();
+    });
+    
+    // Create floating particles effect
+    function createParticles() {
+      const container = document.querySelector('.container');
+      const particleCount = 20;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.width = `${Math.random() * 5 + 2}px`;
+        particle.style.height = particle.style.width;
+        particle.style.background = `rgba(255, 140, 0, ${Math.random() * 0.5 + 0.1})`;
+        particle.style.borderRadius = '50%';
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '-1';
+        
+        // Random animation
+        const duration = Math.random() * 20 + 10;
+        const delay = Math.random() * 5;
+        particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite`;
+        
+        container.appendChild(particle);
+      }
+      
+      // Add keyframes for particle animation
+      const style = document.createElement('style');
+      style.innerHTML = `
+        @keyframes floatParticle {
+          0% {
+            transform: translate(0, 0);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  </script>
+</body>
+</html>
