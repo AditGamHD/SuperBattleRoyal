@@ -1,0 +1,29 @@
+{
+  "data_game": [
+    {
+      "nama": "Loading Awal",
+      "tanggal": "2025-07-01",
+      "link": "https://www.loadingawal.com"
+    },
+    {
+      "nama": "Login Banner",
+      "tanggal": "2025-07-01",
+      "link": "https://www.loginbanner.com"
+    },
+    {
+      "nama": "Lobby Banner",
+      "tanggal": "2025-07-01",
+      "link": "https://www.lobbybanner.com"
+    },
+    {
+      "nama": "Login Sound",
+      "tanggal": "2025-07-01",
+      "link": "https://www.loginsound.com"
+    },
+    {
+      "nama": "Lobby Sound",
+      "tanggal": "2025-07-01",
+      "link": "https://www.lobbysound.com"
+    }
+  ]
+}
