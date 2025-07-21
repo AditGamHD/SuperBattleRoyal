@@ -3,31 +3,36 @@
     {
       "nama": "Loading Awal",
       "tanggal": "2025-07-01",
-      "versi": "0.00001",
+      "tanggal_awal": "2025-07-01",
+      "tanggal_akhir": "2025-12-31",
       "link": "https://www.loadingawal.com"
     },
     {
       "nama": "Login Banner",
       "tanggal": "2025-07-01",
-      "versi": "0.00001",
+      "tanggal_awal": "2025-07-01",
+      "tanggal_akhir": "2025-12-31",
       "link": "https://www.loginbanner.com"
     },
     {
       "nama": "Lobby Banner",
       "tanggal": "2025-07-01",
-      "versi": "0.00001",
+      "tanggal_awal": "2025-07-01",
+      "tanggal_akhir": "2025-12-31",
       "link": "https://www.lobbybanner.com"
     },
     {
       "nama": "Login Sound",
       "tanggal": "2025-07-01",
-      "versi": "0.00001",
+      "tanggal_awal": "2025-07-01",
+      "tanggal_akhir": "2025-12-31",
       "link": "https://www.loginsound.com"
     },
     {
       "nama": "Lobby Sound",
       "tanggal": "2025-07-01",
-      "versi": "0.00001",
+      "tanggal_awal": "2025-07-01",
+      "tanggal_akhir": "2025-12-31",
       "link": "https://www.lobbysound.com"
     }
   ]
