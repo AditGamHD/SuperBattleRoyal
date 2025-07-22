@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Struktur Kelas</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      color: #222;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 5px solid #2980b9;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      border-bottom: 3px solid #2c3e50;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+    .box-section {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+    }
+    .card {
+      background-color: #ecf0f1;
+      padding: 10px;
+      border-left: 5px solid #3498db;
+    }
+    .title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Struktur Kelas 9A</h1>
+  </header>
+  <div class="container">
+    <div class="box-section">
+      <h2>Pengurus Kelas</h2>
+      <div class="grid">
+        <div class="card"><div class="title">Wali Kelas</div>Hastin Riva</div>
+        <div class="card"><div class="title">Ketua Kelas</div>Moza</div>
+        <div class="card"><div class="title">Wakil Ketua</div>Zaki</div>
+        <div class="card"><div class="title">Bendahara</div>1. Andin<br>2. Ardila</div>
+        <div class="card"><div class="title">Sekretaris</div>1. Vino<br>2. Nayla</div>
+      </div>
+    </div>
+
+    <div class="box-section">
+      <h2>Daftar Piket</h2>
+      <div class="grid">
+        <div class="card"><div class="title">Senin</div>Ikbal<br>Valent<br>Azam<br>Via<br>Ifana</div>
+        <div class="card"><div class="title">Selasa</div>Vino<br>Farid<br>Nelza<br>Tizza<br>Putri</div>
+        <div class="card"><div class="title">Rabu</div>Andin<br>Ardila<br>Rehan<br>Adit<br>Dika</div>
+        <div class="card"><div class="title">Kamis</div>Yessy<br>Amel<br>Safira<br>Marvel<br>Radit</div>
+        <div class="card"><div class="title">Jumat</div>Moza<br>Chika<br>Nayla<br>Angel<br>Zaky<br>Deni</div>
+        <div class="card"><div class="title">Sabtu</div>Khafid<br>Rengga<br>Aisyah<br>Azril<br>Naya</div>
+      </div>
+    </div>
+
+    <div class="box-section">
+      <h2>5K</h2>
+      <div class="grid">
+        <div class="card"><div class="title">Kebersihan</div>Chika<br>Farid</div>
+        <div class="card"><div class="title">Ketertiban</div>Tizza<br>Azam</div>
+        <div class="card"><div class="title">Keagamaan</div>Naya<br>Khafid</div>
+        <div class="card"><div class="title">Kekeluargaan</div>Ifana<br>Valent</div>
+        <div class="card"><div class="title">Kesehatan</div>Nelza<br>Marvel</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
