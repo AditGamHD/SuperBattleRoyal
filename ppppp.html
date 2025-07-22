@@ -3,156 +3,143 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Data Kelas</title>
+  <title>Struktur Kelas 9A</title>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-    }
     body {
       margin: 0;
-      padding: 40px;
-      background: #f5faff;
-      color: #002f5f;
-    }
-    .container {
-      max-width: 1120px;
-      margin: auto;
+      padding: 2cm;
       background: white;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-      border: 2px solid #cce6ff;
+      font-family: 'Segoe UI', sans-serif;
+      color: #003366;
     }
-    h1, h2 {
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      border: 4px solid #003366;
+      padding: 30px;
+      background: #f0f8ff;
+    }
+
+    h1 {
       text-align: center;
-      color: #003f7d;
+      color: #003366;
+      font-size: 36px;
+      margin-bottom: 10px;
     }
-    .section {
-      margin-bottom: 40px;
+
+    h2 {
+      text-align: center;
+      color: #00509e;
+      font-size: 28px;
+      margin-top: 40px;
     }
-    .box-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 20px;
-    }
+
     .box {
-      background: #e6f3ff;
-      padding: 10px 16px;
-      border-left: 4px solid #3399ff;
-      border-radius: 6px;
-      min-width: 150px;
-      flex: 1;
+      border: 2px solid #003366;
+      margin: 10px 0;
+      padding: 10px 20px;
+      background: white;
+      border-radius: 8px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
     }
-    td, th {
-      padding: 12px;
-      border: 1px solid #bbdefb;
-      text-align: center;
+
+    .role {
+      font-weight: bold;
+      color: #00509e;
+      margin-bottom: 4px;
     }
-    th {
-      background: #dceeff;
+
+    .names {
+      margin-left: 10px;
     }
-    .grid-3 {
+
+    .piket-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      gap: 20px;
+      margin-top: 20px;
     }
-    .label {
-      font-weight: bold;
-      margin-top: 10px;
-      margin-bottom: 6px;
+
+    .hari {
+      border: 2px solid #00509e;
+      border-radius: 8px;
+      padding: 15px;
+      background: #e6f0ff;
+    }
+
+    .hari h3 {
+      margin-top: 0;
+      color: #003366;
+    }
+
+    @media print {
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        border: none;
+        padding: 0;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Data Kelas</h1>
+    <h1>Struktur Kelas 9A</h1>
 
-    <div class="section">
-      <h2>Pengurus Kelas</h2>
-      <div class="label">Wali Kelas: Bu Hastin Riva</div>
-      <div class="box-group">
-        <div class="box"><strong>Ketua Kelas:</strong><br>Moza</div>
-        <div class="box"><strong>Wakil Ketua:</strong><br>Zaki</div>
-        <div class="box"><strong>Bendahara:</strong><br>1. Andin<br>2. Ardila</div>
-        <div class="box"><strong>Sekretaris:</strong><br>1. Vino<br>2. Nayla</div>
-      </div>
+    <h2>Pengurus Kelas</h2>
+    <div class="grid">
+      <div class="box"><span class="role">Wali Kelas:</span> <span class="names">Hastin Riva</span></div>
+      <div class="box"><span class="role">Ketua Kelas:</span> <span class="names">Marselya Moza</span></div>
+      <div class="box"><span class="role">Wakil Ketua:</span> <span class="names">M. Dzaky</span></div>
+      <div class="box"><span class="role">Sekretaris 1:</span> <span class="names">Devino Annas</span></div>
+      <div class="box"><span class="role">Sekretaris 2:</span> <span class="names">Nayla Dian</span></div>
+      <div class="box"><span class="role">Bendahara 1:</span> <span class="names">Andin Maydina</span></div>
+      <div class="box"><span class="role">Bendahara 2:</span> <span class="names">Ardila Syafalia</span></div>
     </div>
 
-    <div class="section">
-      <h2>Daftar Piket</h2>
-      <div class="grid-3">
-        <table>
-          <tr><th>Senin</th></tr>
-          <tr><td>Ikbal</td></tr>
-          <tr><td>Valent</td></tr>
-          <tr><td>Azam</td></tr>
-          <tr><td>Via</td></tr>
-          <tr><td>Ifana</td></tr>
-        </table>
-
-        <table>
-          <tr><th>Selasa</th></tr>
-          <tr><td>Vino</td></tr>
-          <tr><td>Farid</td></tr>
-          <tr><td>Nelza</td></tr>
-          <tr><td>Tizza</td></tr>
-          <tr><td>Putri</td></tr>
-        </table>
-
-        <table>
-          <tr><th>Rabu</th></tr>
-          <tr><td>Andin</td></tr>
-          <tr><td>Ardila</td></tr>
-          <tr><td>Rehan</td></tr>
-          <tr><td>Adit</td></tr>
-          <tr><td>Dika</td></tr>
-        </table>
-
-        <table>
-          <tr><th>Kamis</th></tr>
-          <tr><td>Yessy</td></tr>
-          <tr><td>Amel</td></tr>
-          <tr><td>Safira</td></tr>
-          <tr><td>Marvel</td></tr>
-          <tr><td>Radit</td></tr>
-        </table>
-
-        <table>
-          <tr><th>Jumat</th></tr>
-          <tr><td>Moza</td></tr>
-          <tr><td>Chika</td></tr>
-          <tr><td>Nayla</td></tr>
-          <tr><td>Angel</td></tr>
-          <tr><td>Zaky</td></tr>
-          <tr><td>Deni</td></tr>
-        </table>
-
-        <table>
-          <tr><th>Sabtu</th></tr>
-          <tr><td>Khafid</td></tr>
-          <tr><td>Rengga</td></tr>
-          <tr><td>Aisyah</td></tr>
-          <tr><td>Azril</td></tr>
-          <tr><td>Naya</td></tr>
-        </table>
-      </div>
+    <h2>5K</h2>
+    <div class="grid">
+      <div class="box"><span class="role">Kebersihan:</span> <span class="names">Chika, Farid</span></div>
+      <div class="box"><span class="role">Ketertiban:</span> <span class="names">Tizza, Azam</span></div>
+      <div class="box"><span class="role">Keagamaan:</span> <span class="names">Naya, Khafid</span></div>
+      <div class="box"><span class="role">Kekeluargaan:</span> <span class="names">Ifana, Valent</span></div>
+      <div class="box"><span class="role">Kesehatan:</span> <span class="names">Nelza, Marvel</span></div>
     </div>
 
-    <div class="section">
-      <h2>5K Kelas</h2>
-      <div class="box-group">
-        <div class="box"><strong>Kebersihan</strong><br>Chika<br>Farid</div>
-        <div class="box"><strong>Ketertiban</strong><br>Tizza<br>Azam</div>
-        <div class="box"><strong>Keagamaan</strong><br>Naya<br>Khafid</div>
-        <div class="box"><strong>Kekeluargaan</strong><br>Ifana<br>Valent</div>
-        <div class="box"><strong>Kesehatan</strong><br>Nelza<br>Marvel</div>
+    <h2>Jadwal Piket</h2>
+    <div class="piket-grid">
+      <div class="hari">
+        <h3>Senin</h3>
+        <p>Ikbal, Valent, Azam, Via, Ifana</p>
+      </div>
+      <div class="hari">
+        <h3>Selasa</h3>
+        <p>Vino, Farid, Nelza, Tizza, Putri</p>
+      </div>
+      <div class="hari">
+        <h3>Rabu</h3>
+        <p>Andin, Ardila, Rehan, Adit, Dika</p>
+      </div>
+      <div class="hari">
+        <h3>Kamis</h3>
+        <p>Yessy, Amel, Safira, Marvel, Radit</p>
+      </div>
+      <div class="hari">
+        <h3>Jumat</h3>
+        <p>Moza, Chika, Nayla, Angel, Zaky, Deni</p>
+      </div>
+      <div class="hari">
+        <h3>Sabtu</h3>
+        <p>Khafid, Rengga, Aisyah, Azril, Naya</p>
       </div>
     </div>
   </div>
