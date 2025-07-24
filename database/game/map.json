@@ -1,44 +1,64 @@
 {
-  "map": [
+  "maps": [
     {
-      "name": "",
-      "link": ""
+      "map": "",
+      "linkmap": "",
+      "map3d": "",
+      "link3dmap": ""
     },
     {
-      "name": "",
-      "link": ""
+      "map": "",
+      "linkmap": "",
+      "map3d": "",
+      "link3dmap": ""
     },
     {
-      "name": "",
-      "link": ""
+      "map": "",
+      "linkmap": "",
+      "map3d": "",
+      "link3dmap": ""
     },
     {
-      "name": "",
-      "link": ""
+      "map": "",
+      "linkmap": "",
+      "map3d": "",
+      "link3dmap": ""
     },
     {
-      "name": "",
-      "link": ""
+      "map": "",
+      "linkmap": "",
+      "map3d": "",
+      "link3dmap": ""
     },
     {
-      "name": "",
-      "link": ""
+      "map": "",
+      "linkmap": "",
+      "map3d": "",
+      "link3dmap": ""
     },
     {
-      "name": "",
-      "link": ""
+      "map": "",
+      "linkmap": "",
+      "map3d": "",
+      "link3dmap": ""
     },
     {
-      "name": "",
-      "link": ""
+      "map": "",
+      "linkmap": "",
+      "map3d": "",
+      "link3dmap": ""
     },
     {
-      "name": "",
-      "link": ""
+      "map": "",
+      "linkmap": "",
+      "map3d": "",
+      "link3dmap": ""
     },
     {
-      "name": "",
-      "link": ""
+      "map": "",
+      "linkmap": "",
+      "map3d": "",
+      "link3dmap": ""
     }
   ]
 }
