@@ -1,44 +1,22 @@
-{
-  "heroes": [
-    {
-      "name": "",
-      "link": ""
-    },
-    {
-      "name": "",
-      "link": ""
-    },
-    {
-      "name": "",
-      "link": ""
-    },
-    {
-      "name": "",
-      "link": ""
-    },
-    {
-      "name": "",
-      "link": ""
-    },
-    {
-      "name": "",
-      "link": ""
-    },
-    {
-      "name": "",
-      "link": ""
-    },
-    {
-      "name": "",
-      "link": ""
-    },
-    {
-      "name": "",
-      "link": ""
-    },
-    {
-      "name": "",
-      "link": ""
-    }
-  ]
-}
+[
+  {
+    "name": "Superboy",
+    "model": "https://raw.githubusercontent.com/namakamu/game-assets/main/heroes/CyberKnight.fbx",
+    "image": "https://raw.githubusercontent.com/namakamu/game-assets/main/heroes/CyberKnight.png"
+  },
+  {
+    "name": "SuperGirl",
+    "model": "https://raw.githubusercontent.com/namakamu/game-assets/main/heroes/NeoSamurai.fbx",
+    "image": "https://raw.githubusercontent.com/namakamu/game-assets/main/heroes/NeoSamurai.png"
+  },
+  {
+    "name": "MR.Botak",
+    "model": "https://raw.githubusercontent.com/namakamu/game-assets/main/heroes/RoboFox.fbx",
+    "image": "https://raw.githubusercontent.com/namakamu/game-assets/main/heroes/RoboFox.png"
+  },
+  {
+    "name": "MR.Boxer",
+    "model": "https://raw.githubusercontent.com/namakamu/game-assets/main/heroes/ShadowHunter.fbx",
+    "image": "https://raw.githubusercontent.com/namakamu/game-assets/main/heroes/ShadowHunter.png"
+  }
+]
