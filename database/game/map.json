@@ -1,64 +1,12 @@
-{
-  "maps": [
-    {
-      "map": "",
-      "linkmap": "",
-      "map3d": "",
-      "link3dmap": ""
-    },
-    {
-      "map": "",
-      "linkmap": "",
-      "map3d": "",
-      "link3dmap": ""
-    },
-    {
-      "map": "",
-      "linkmap": "",
-      "map3d": "",
-      "link3dmap": ""
-    },
-    {
-      "map": "",
-      "linkmap": "",
-      "map3d": "",
-      "link3dmap": ""
-    },
-    {
-      "map": "",
-      "linkmap": "",
-      "map3d": "",
-      "link3dmap": ""
-    },
-    {
-      "map": "",
-      "linkmap": "",
-      "map3d": "",
-      "link3dmap": ""
-    },
-    {
-      "map": "",
-      "linkmap": "",
-      "map3d": "",
-      "link3dmap": ""
-    },
-    {
-      "map": "",
-      "linkmap": "",
-      "map3d": "",
-      "link3dmap": ""
-    },
-    {
-      "map": "",
-      "linkmap": "",
-      "map3d": "",
-      "link3dmap": ""
-    },
-    {
-      "map": "",
-      "linkmap": "",
-      "map3d": "",
-      "link3dmap": ""
-    }
-  ]
-}
+[
+  {
+    "name": "SuperWorld",
+    "model": "https://raw.githubusercontent.com/namakamu/game-assets/main/maps/NeoCity.fbx",
+    "image": "https://raw.githubusercontent.com/namakamu/game-assets/main/maps/NeoCity.png"
+  },
+  {
+    "name": "training",
+    "model": "https://raw.githubusercontent.com/namakamu/game-assets/main/maps/CyberDesert.fbx",
+    "image": "https://raw.githubusercontent.com/namakamu/game-assets/main/maps/CyberDesert.png"
+  }
+]
