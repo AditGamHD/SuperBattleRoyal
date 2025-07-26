@@ -1,0 +1,8 @@
+{
+  "version": 0.1,
+  "scenes": {
+    "scene/lobby.tscn": "https://raw.githubusercontent.com/AditGamHD/SuperBattleRoyal/main/scenes/lobby.tscn",
+    "scene/map1.tscn": "https://raw.githubusercontent.com/AditGamHD/SuperBattleRoyal/main/scenes/map1.tscn",
+    "scene/hero_super.tscn": "https://raw.githubusercontent.com/AditGamHD/SuperBattleRoyal/main/scenes/hero_super.tscn"
+  }
+}
